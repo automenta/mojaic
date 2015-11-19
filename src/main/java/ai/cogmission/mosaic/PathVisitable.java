@@ -9,5 +9,5 @@ package ai.cogmission.mosaic;
  * 				generics resolution.
  */
 interface PathVisitable<T> {
-    public void accept(PathVisitor<T> lv);
+    void accept(PathVisitor<T> lv);
 }

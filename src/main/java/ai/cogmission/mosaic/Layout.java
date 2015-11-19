@@ -18,7 +18,7 @@ public interface Layout {
 	 * @param layout	the Layout to add to this one.
 	 * @return	this {@code Layout}
 	 */
-	public Layout add(Layout layout);
+	Layout add(Layout layout);
 	
 	/**
 	 * Adds a cell specifying its most basic required attributes.
@@ -30,7 +30,7 @@ public interface Layout {
 	 * @param height
 	 * @return 	this {@code Layout}
 	 */
-	public Layout addCell(String id, double x, double y, double width, double height);
+	Layout addCell(String id, double x, double y, double width, double height);
 	
 	/**
 	 * Adds a cell specifying the basic attributes and additional constraints.
@@ -46,15 +46,15 @@ public interface Layout {
 	 * @param maxH
 	 * @return 	this {@code Layout}
 	 */
-	public Layout addCell(String id, double x, double y, double width, double height,
-		double minW, double maxW, double minH, double maxH);
+	Layout addCell(String id, double x, double y, double width, double height,
+				   double minW, double maxW, double minH, double maxH);
 	
 	/**
 	 * Returns a flag indicating whether this {@code Layout} object is
 	 * relative or not.
 	 * @return	true if relative, false if not.
 	 */
-	public boolean isRelative();
+	boolean isRelative();
 	
 	/**
 	 * Returns the cell specification for the specified id if any 
@@ -64,6 +64,6 @@ public interface Layout {
 	 * @return		the comma-separated string representing the correlated layout.
 	 */
 	@JsonIgnore
-	public String getCell(String id);
+	String getCell(String id);
 	
 }

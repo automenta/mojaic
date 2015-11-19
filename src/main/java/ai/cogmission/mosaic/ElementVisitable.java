@@ -9,6 +9,6 @@ package ai.cogmission.mosaic;
  * 				generics resolution.
  */
 interface ElementVisitable <T> {
-    public void acceptHorizontal(ElementVisitor<T> ev);
-    public void acceptVertical(ElementVisitor<T> ev);
+    void acceptHorizontal(ElementVisitor<T> ev);
+    void acceptVertical(ElementVisitor<T> ev);
 }

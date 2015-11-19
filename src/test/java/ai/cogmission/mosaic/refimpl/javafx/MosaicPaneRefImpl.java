@@ -1,13 +1,7 @@
 package ai.cogmission.mosaic.refimpl.javafx;
 
 
-import java.net.URL;
-import java.nio.file.Paths;
-import java.util.Map;
-import java.util.Random;
-
 import ai.cogmission.mosaic.ModelLoader;
-import ai.cogmission.mosaic.refimpl.javafx.MosaicPane;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -18,6 +12,12 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.Paths;
+import java.util.Map;
+import java.util.Random;
 
 public class MosaicPaneRefImpl extends Application {
 	/** Mapping of element id's to labels for later reference when serializing */
@@ -83,9 +83,10 @@ public class MosaicPaneRefImpl extends Application {
 		return label;
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws MalformedURLException {
 		if(args == null || args.length < 1 || args[0] == null) {
-		    URL url = MosaicPaneRefImpl.class.getResource("testModel.txt");
+		    //URL url = MosaicPaneRefImpl.class.getResource("testModel.txt");
+			URL url = new URL("file:///tmp/model.txt");
 		    String path = Paths.get(url.toExternalForm()).toAbsolutePath().toString();
 		    try{
 		        path = Paths.get(url.toURI()).toAbsolutePath().toString();

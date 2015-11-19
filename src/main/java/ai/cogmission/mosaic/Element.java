@@ -27,16 +27,16 @@ abstract class Element<T> implements ElementVisitable<T> {
 	protected boolean useSurfaceOffset;
 	
 	/** (optional) offset distance from origin (0,0) */
-    private Point2D.Double surfaceOffset = new Point2D.Double();
+    private final Point2D.Double surfaceOffset = new Point2D.Double();
     
     /** The rectangle modified during layout */
     @JsonSerialize(using = DividerSerializer.class)
 	@JsonDeserialize(using = DividerDeserializer.class)
 	protected Rectangle2D.Double r;
 	/** The rectangle used to compare to see if anythings changed */
-	protected Rectangle2D.Double copy;
+	protected final Rectangle2D.Double copy;
 	/** The offsets of the object within it's container. */
-	protected Rectangle2D.Double wo;
+	protected final Rectangle2D.Double wo;
 	
 	/** The percentage of the overall width this object will be allocated */
 	protected double horizontalWeight;
@@ -254,8 +254,6 @@ abstract class Element<T> implements ElementVisitable<T> {
 				return false;
 		} else if (!stringID.equals(other.stringID))
 			return false;
-		if (type != other.type)
-			return false;
-		return true;
+		return type == other.type;
 	}
 }

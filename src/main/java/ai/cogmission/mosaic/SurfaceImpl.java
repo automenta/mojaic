@@ -21,12 +21,8 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	
 	/** Flag indicating first layout run */
     private boolean isInit = true;
-    
-    /** Enabled flag */
-    @JsonProperty
-    private boolean isEnabled = true;
-    
-    /** Flag indicating whether a drag operation is currently ocurring */
+
+	/** Flag indicating whether a drag operation is currently ocurring */
     private boolean isDragging;
     
     /** the size opposite to its direction */
@@ -62,10 +58,10 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
     
     /** the minimum distance from the outer edge of the surface before adding a new divider */
     @JsonProperty
-	private Point2D.Double boundaryDividerCondition = new Point2D.Double(20, 20);
+	private final Point2D.Double boundaryDividerCondition = new Point2D.Double(20, 20);
 	
 	/** List of {@link SurfaceListener}s. */
-	private ChangeListenerList listeners = new ChangeListenerList();
+	private final ChangeListenerList listeners = new ChangeListenerList();
 	
 	/** Offset point from (0,0) */
 	@JsonProperty
@@ -86,7 +82,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
     private MosaicEngineImpl<T>.InputManager inputManager;
     
     /** Used by the engine to temporarily store its search results for overlapping dividers */
-    private Map<Divider<T>, List<Divider<T>>> tempOverlapSearchMap = new HashMap<Divider<T>, List<Divider<T>>>();
+    private final Map<Divider<T>, List<Divider<T>>> tempOverlapSearchMap = new HashMap<>();
        
     /** Used for persistence handling and temporary object storage prior to addition to engine */
     @JsonProperty
@@ -109,7 +105,9 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	@SuppressWarnings("serial")
     private class ChangeListenerList extends ArrayList<SurfaceListener<T>> implements SurfaceListener<T> {
 	    public void changed(ChangeType changeType, T t, String id, Rectangle2D oldRectangle , Rectangle2D newRectangle) {
-	    	if(!isEnabled) return;
+	    	/* Enabled flag */
+			boolean isEnabled = true;
+			if(!isEnabled) return;
 	    	
 	        for(SurfaceListener<T> listener : this) {
 	            listener.changed(changeType, t, id, oldRectangle, newRectangle);
@@ -185,7 +183,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	 * of a layout as it exists at the time of this method being called.
 	 */
 	void snapshotLayout() {
-		this.layoutCopy = new LayoutImpl<T>(layout);
+		this.layoutCopy = new LayoutImpl<>(layout);
 	}
 	
 	LayoutImpl<T> getSnapshot() {
@@ -194,7 +192,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	
 	void revertLayout() {
 		this.layout.clearAll();
-		this.layout = new LayoutImpl<T>(layoutCopy);
+		this.layout = new LayoutImpl<>(layoutCopy);
 	}
 	
 	/**
@@ -253,7 +251,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	 */
 	public LayoutImpl<T> copyLayout() {
 		long start = System.nanoTime();
-		LayoutImpl<T> copy = new LayoutImpl<T>(layout);
+		LayoutImpl<T> copy = new LayoutImpl<>(layout);
 		long finish = System.nanoTime() - start;
 		System.out.println("copy layout: execution time: " + ((double)finish / 1000000000.0d) + "  secs.");
 		return copy;
@@ -395,7 +393,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	}
 	
 	void snapshotInterimLayout() {
-		this.interimLayoutSnapshot = new LayoutImpl<T>(layout);
+		this.interimLayoutSnapshot = new LayoutImpl<>(layout);
 	}
 	
 	LayoutImpl<T> getInterimSnapshot() {
@@ -415,7 +413,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	public void requestAdd(T source, String sourceID, T target, Position p) {
 		validateAddParams(source, sourceID, target, p);
 		
-		Node<T> newNode = new Node<T>(source, sourceID, 0, 0, 0, 0, 0, Double.MAX_VALUE, 0, Double.MAX_VALUE, 0, 0);
+		Node<T> newNode = new Node<>(source, sourceID, 0, 0, 0, 0, 0, Double.MAX_VALUE, 0, Double.MAX_VALUE, 0, 0);
 		engine.requestAddElement(this, newNode, getNode(layout.get(target)), p);
 	}
 
@@ -626,7 +624,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 			String[] spec = layout.getCell(id).split(LayoutConstants.CELL_PTRN);
 			Node<T> node = null;
 			if(spec.length > LayoutConstants.MAX_H) {
-				node = new Node<T>(layout.get(id), id, 
+				node = new Node<>(layout.get(id), id,
 						Double.parseDouble(spec[LayoutConstants.X]),
 						Double.parseDouble(spec[LayoutConstants.Y]),
 						Double.parseDouble(spec[LayoutConstants.W]),
@@ -636,11 +634,11 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 						Double.parseDouble(spec[LayoutConstants.MIN_H]),
 						Double.parseDouble(spec[LayoutConstants.MAX_H]));
 			} else {
-				node = new Node<T>(layout.get(id), id, 
-					Double.parseDouble(spec[LayoutConstants.X]),
-					Double.parseDouble(spec[LayoutConstants.Y]),
-					Double.parseDouble(spec[LayoutConstants.W]),
-					Double.parseDouble(spec[LayoutConstants.H]));
+				node = new Node<>(layout.get(id), id,
+						Double.parseDouble(spec[LayoutConstants.X]),
+						Double.parseDouble(spec[LayoutConstants.Y]),
+						Double.parseDouble(spec[LayoutConstants.W]),
+						Double.parseDouble(spec[LayoutConstants.H]));
 			}
 			if(node.percentX == 0 && node.percentY == 0 && node.r.x == 0 && node.r.y == 0) {
 				layout.setRoot(node);
@@ -655,17 +653,17 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 		for(String id : layout.stringKeySet()) {
 			String[] spec = layout.getCell(id).split(LayoutConstants.CELL_PTRN);
 			Node<T> node = null;
-			node = new Node<T>(layout.get(id), id, 
-				Double.parseDouble(spec[LayoutConstants.X]),
-				Double.parseDouble(spec[LayoutConstants.Y]),
-				Double.parseDouble(spec[LayoutConstants.W]),
-				Double.parseDouble(spec[LayoutConstants.H]),
-				Double.parseDouble(spec[LayoutConstants.MIN_W]),
-				Double.parseDouble(spec[LayoutConstants.MAX_W]),
-				Double.parseDouble(spec[LayoutConstants.MIN_H]),
-				Double.parseDouble(spec[LayoutConstants.MAX_H]),
-				Double.parseDouble(spec[LayoutConstants.H_WT]),
-				Double.parseDouble(spec[LayoutConstants.V_WT]));
+			node = new Node<>(layout.get(id), id,
+					Double.parseDouble(spec[LayoutConstants.X]),
+					Double.parseDouble(spec[LayoutConstants.Y]),
+					Double.parseDouble(spec[LayoutConstants.W]),
+					Double.parseDouble(spec[LayoutConstants.H]),
+					Double.parseDouble(spec[LayoutConstants.MIN_W]),
+					Double.parseDouble(spec[LayoutConstants.MAX_W]),
+					Double.parseDouble(spec[LayoutConstants.MIN_H]),
+					Double.parseDouble(spec[LayoutConstants.MAX_H]),
+					Double.parseDouble(spec[LayoutConstants.H_WT]),
+					Double.parseDouble(spec[LayoutConstants.V_WT]));
 			
 			if(node.percentX == 0 && node.percentY == 0 && node.r.x == 0 && node.r.y == 0) {
 				layout.setRoot(node);
@@ -679,7 +677,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	
 	private List<Node<T>> createTargetlessNodes() {
 		List<Node<T>> nodeList = getNodeList();
-		List<Node<T>> retList = new ArrayList<Node<T>>();
+		List<Node<T>> retList = new ArrayList<>();
 		for(String cell : layout.getCells()) {
 			Node<T> node = createSerializedNode(cell);
 			if(!nodeList.contains(node)) {
@@ -692,17 +690,17 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	private Node<T> createSerializedNode(String layoutSpec) {
 		String[] spec = layoutSpec.split(LayoutConstants.CELL_PTRN);
 		String id = layout.parse(layoutSpec, LayoutConstants.ID);
-		Node<T> node = new Node<T>(layout.get(id), id, 
-			Double.parseDouble(spec[LayoutConstants.X]),
-			Double.parseDouble(spec[LayoutConstants.Y]),
-			Double.parseDouble(spec[LayoutConstants.W]),
-			Double.parseDouble(spec[LayoutConstants.H]),
-			Double.parseDouble(spec[LayoutConstants.MIN_W]),
-			Double.parseDouble(spec[LayoutConstants.MAX_W]),
-			Double.parseDouble(spec[LayoutConstants.MIN_H]),
-			Double.parseDouble(spec[LayoutConstants.MAX_H]),
-			Double.parseDouble(spec[LayoutConstants.H_WT]),
-			Double.parseDouble(spec[LayoutConstants.V_WT]));
+		Node<T> node = new Node<>(layout.get(id), id,
+				Double.parseDouble(spec[LayoutConstants.X]),
+				Double.parseDouble(spec[LayoutConstants.Y]),
+				Double.parseDouble(spec[LayoutConstants.W]),
+				Double.parseDouble(spec[LayoutConstants.H]),
+				Double.parseDouble(spec[LayoutConstants.MIN_W]),
+				Double.parseDouble(spec[LayoutConstants.MAX_W]),
+				Double.parseDouble(spec[LayoutConstants.MIN_H]),
+				Double.parseDouble(spec[LayoutConstants.MAX_H]),
+				Double.parseDouble(spec[LayoutConstants.H_WT]),
+				Double.parseDouble(spec[LayoutConstants.V_WT]));
 		
 		if(node.percentX == 0 && node.percentY == 0 && node.r.x == 0 && node.r.y == 0) {
 			layout.setRoot(node);
@@ -735,7 +733,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	
 	private Divider<T> createDividerFromSerialized(String divStr, boolean isVertical) {
 		String[] spec = divStr.split(LayoutConstants.CELL_PTRN);
-		Divider<T> d = new Divider<T>();
+		Divider<T> d = new Divider<>();
 		d.dividerSize = dividerSize;
 		d.isVertical = isVertical;
 		d.setId(Integer.parseInt(spec[LayoutConstants.ID]));
@@ -799,7 +797,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	 * T ids have corresponding layout specs.
 	 */
 	private void validateLayout() {
-		List<String> missingIds = new ArrayList<String>();
+		List<String> missingIds = new ArrayList<>();
 		for(String id : layout.stringKeySet()) {
 			if(layout.getCell(id) == null) {
 				missingIds.add(id);
@@ -905,7 +903,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 		}
 		
 		if(layout == null) {
-			layout = new LayoutImpl<T>(true);
+			layout = new LayoutImpl<>(true);
 		}
 		
 		layout.addCell(id, percentX, percentY, percentWidth, percentHeight, minW, maxW, minH, maxH);
@@ -930,7 +928,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 		}
 		
 		if(layout == null) {
-			layout = new LayoutImpl<T>(false);
+			layout = new LayoutImpl<>(false);
 		}
 		
 		layout.addCell(id, x, y, width, height, minW, maxW, minH, maxH);

@@ -37,5 +37,5 @@ public interface SurfaceListener<T> {
 	 * @param oldRectangle		the previous location and dimensions
 	 * @param newRectangle		the new location and dimensions
 	 */
-    public void changed(ChangeType changeType, T uiElement, String id, Rectangle2D oldRectangle, Rectangle2D newRectangle);
+	void changed(ChangeType changeType, T uiElement, String id, Rectangle2D oldRectangle, Rectangle2D newRectangle);
 }

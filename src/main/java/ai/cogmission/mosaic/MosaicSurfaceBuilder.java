@@ -104,7 +104,7 @@ public class MosaicSurfaceBuilder<T> implements SurfaceBuilder<T> {
 	 */
 	@Override
 	public Surface<T> build() {
-		surface = new SurfaceImpl<T>();
+		surface = new SurfaceImpl<>();
 		
 		if(cornerClickRadius == UNSET) {
 			throw new IllegalStateException("Corner click radius unset. (reasonable value is 3)");

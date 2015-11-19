@@ -19,7 +19,7 @@ public interface MosaicPaneListener {
 	 * @param percentWidth		the percentage of the overall width the object should occupy.
 	 * @param percentHeight		the percentage of the overall height the object should occupy.
 	 */
-	public void componentAdded(Component added, String id, double percentX, double percentY, double percentWidth, double percentHeight);
+	void componentAdded(Component added, String id, double percentX, double percentY, double percentWidth, double percentHeight);
 	
-	public void serializedComponentAdded(Component added, String id);
+	void serializedComponentAdded(Component added, String id);
 }

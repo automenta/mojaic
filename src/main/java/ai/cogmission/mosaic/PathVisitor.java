@@ -13,6 +13,6 @@ import ai.cogmission.mosaic.PathIterator.VerticalPath;
  */
 @SuppressWarnings("rawtypes")
 interface PathVisitor <T> {
-	public void visit(HorizontalPath hp);
-    public void visit(VerticalPath vp);
+	void visit(HorizontalPath hp);
+    void visit(VerticalPath vp);
 }

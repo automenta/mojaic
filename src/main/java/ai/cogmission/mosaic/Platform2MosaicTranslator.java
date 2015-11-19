@@ -34,13 +34,13 @@ public class Platform2MosaicTranslator {
 	}
 	
 	public static <T> Layout toMosaicLayout(PlatformLayoutMap[] map) { 
-		LayoutImpl<T> layout = new LayoutImpl<T>(false);
+		LayoutImpl<T> layout = new LayoutImpl<>(false);
 		
 		if(map.length == 1) {
 			layout.setRelative(false);
 			
-			Node<T> root = new Node<T>(null, map[0].getTopLeftPluginID(), 0d, 0d, 400d, 400d, 
-				0d, Double.MAX_VALUE, 0d, Double.MAX_VALUE, 1.0d, 1.0d);
+			Node<T> root = new Node<>(null, map[0].getTopLeftPluginID(), 0d, 0d, 400d, 400d,
+					0d, Double.MAX_VALUE, 0d, Double.MAX_VALUE, 1.0d, 1.0d);
 			
 			layout.setRoot(root);
 			
@@ -54,12 +54,12 @@ public class Platform2MosaicTranslator {
 	}
 	
 	private static <T> Node<T> makeNode(String id) {
-		return new Node<T>(null, id, 0d, 0d, 0d, 0d, 
-			0d, Double.MAX_VALUE, 0d, Double.MAX_VALUE, 0d, 0d);
+		return new Node<>(null, id, 0d, 0d, 0d, 0d,
+				0d, Double.MAX_VALUE, 0d, Double.MAX_VALUE, 0d, 0d);
 	}
 	
 	private static <T> Divider<T> makeDivider(boolean isVertical) {
-		return new Divider<T>(0, 0, 0, isVertical);
+		return new Divider<>(0, 0, 0, isVertical);
 	}
 	
 	private static <T> Node<T> gn(PlatformLayoutMap[] array, PlatformLayoutMap parent) {
@@ -226,7 +226,7 @@ public class Platform2MosaicTranslator {
 	}
 	
 	private static List<PlatformLayoutMap> getChildren(PlatformLayoutMap[] map, PlatformLayoutMap parent) {
-		List<PlatformLayoutMap> l = new ArrayList<PlatformLayoutMap>();
+		List<PlatformLayoutMap> l = new ArrayList<>();
 		for(PlatformLayoutMap plm : map) {
 			if(plm.getParentName().equals(parent.getName())) {
 				l.add(plm);

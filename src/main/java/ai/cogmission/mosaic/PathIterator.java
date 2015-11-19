@@ -19,8 +19,8 @@ class PathIterator<T> implements PathVisitable<T> {
      * Constructs a new {@code PathIterator}
      */
     public PathIterator() {
-        horizontalPaths = new ArrayList<HorizontalPath>();
-        verticalPaths = new ArrayList<VerticalPath>();
+        horizontalPaths = new ArrayList<>();
+        verticalPaths = new ArrayList<>();
     }
     
     /**
@@ -102,8 +102,8 @@ class PathIterator<T> implements PathVisitable<T> {
      */
     void assemblePaths(Node<T> node) {
     	if(horizontalPaths == null) {
-	        horizontalPaths = new ArrayList<HorizontalPath>();
-	        verticalPaths = new ArrayList<VerticalPath>();
+	        horizontalPaths = new ArrayList<>();
+	        verticalPaths = new ArrayList<>();
     	}else{
     		horizontalPaths.clear();
     		verticalPaths.clear();
@@ -239,7 +239,7 @@ class PathIterator<T> implements PathVisitable<T> {
      * 				Node specified by id.
      */
     public List<Path> lookup(String id) {
-    	List<Path> results = new ArrayList<Path>();
+    	List<Path> results = new ArrayList<>();
     	for(HorizontalPath p : horizontalPaths) {
     		if(p.contains(id)) results.add(p);
     	}
@@ -264,7 +264,7 @@ class PathIterator<T> implements PathVisitable<T> {
      */
     abstract class Path {
     	/** List of all elements (i.e. Nodes, Dividers) in this path */
-        protected List<Element<T>> elems = new ArrayList<Element<T>>();
+        protected final List<Element<T>> elems = new ArrayList<>();
         
         /** The count of dividers (every other node) along this path */
         //protected int dividerCount;
@@ -334,7 +334,7 @@ class PathIterator<T> implements PathVisitable<T> {
          * @return	a copy of the current element list.
          */
         public List<Element<T>> getAllElements() {
-        	return new ArrayList<Element<T>>(elems);
+        	return new ArrayList<>(elems);
         }
         
         /**

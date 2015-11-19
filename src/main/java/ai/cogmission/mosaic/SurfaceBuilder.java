@@ -22,13 +22,13 @@ public interface SurfaceBuilder<T> {
 	 * @param radius		the radius from a corner, describing the click recognition distance.
 	 * @return				this builder.
 	 */
-	public SurfaceBuilder<T> cornerClickRadius(double radius);
+	SurfaceBuilder<T> cornerClickRadius(double radius);
 	/**
 	 * Sets the size of all dividers in their static (unchanging) dimension.
 	 * @param size	the size of all dividers.
 	 * @return		this builder.
 	 */
-	public SurfaceBuilder<T> dividerSize(double size);
+	SurfaceBuilder<T> dividerSize(double size);
 	/**
 	 * Sets the distance from a snap point, within which a snap to a valid location
 	 * described by another divider or screen edge, will occur. If the distance is 0,
@@ -37,7 +37,7 @@ public interface SurfaceBuilder<T> {
 	 * @param distance		the distance from another divider within which a snap will occur		
 	 * @return				this builder.
 	 */
-	public SurfaceBuilder<T> snapDistance(double distance);
+	SurfaceBuilder<T> snapDistance(double distance);
 	/**
 	 * Sets a flag indicating that sizes and locations should be within integer precision
 	 * and not to double precision for compatibility with frameworks using integer precision.
@@ -45,13 +45,13 @@ public interface SurfaceBuilder<T> {
 	 * @param b		true if using integer precision, false if not. (Default).
 	 * @return		this builder.
 	 */
-	public SurfaceBuilder<T> useIntegerPrecision(boolean b);
+	SurfaceBuilder<T> useIntegerPrecision(boolean b);
 	/**
 	 * Sets a flag indicating that locations should use the specified 
 	 * @param b
 	 * @return	this builder.
 	 */
-	public SurfaceBuilder<T> useSurfaceOffset(boolean b);
+	SurfaceBuilder<T> useSurfaceOffset(boolean b);
 	/**
 	 * Sets the offset used during calculations and returned by the {@link SurfaceListener#changed(Object, Rectangle2D, Rectangle2D)}
 	 * method's returned {@link Rectangle2D}'s. There may be times when the user has a need to specify an
@@ -63,7 +63,7 @@ public interface SurfaceBuilder<T> {
 	 * @param offset		the amount by which to offset the x and/or y location of the surface
 	 * @return				true if so, false if not.
 	 */
-	public SurfaceBuilder<T> surfaceOffset(Point2D.Double offset);
+	SurfaceBuilder<T> surfaceOffset(Point2D.Double offset);
 	
 	/**
 	 * Returns the properly built {@link Surface} ready for use once objects have been
@@ -80,5 +80,5 @@ public interface SurfaceBuilder<T> {
 	 * than {@link #setSurfaceOffset(double)} which is only valid if {@link #useSurfaceOffset(boolean)}
 	 * has been called previously, and {@link #useIntegerPrecision(boolean)} which <em>defaults to false</em>.
 	 */
-	public Surface<T> build();
+	Surface<T> build();
 }

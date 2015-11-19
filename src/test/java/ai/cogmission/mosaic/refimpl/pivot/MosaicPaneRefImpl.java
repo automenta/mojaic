@@ -1,38 +1,24 @@
 package ai.cogmission.mosaic.refimpl.pivot;
 
-import java.awt.Color;
-import java.awt.Font;
+import ai.cogmission.mosaic.*;
+import org.apache.pivot.collections.Map;
+import org.apache.pivot.collections.Sequence;
+import org.apache.pivot.wtk.*;
+import org.apache.pivot.wtk.Component;
+import org.apache.pivot.wtk.Container;
+import org.apache.pivot.wtk.Dialog;
+import org.apache.pivot.wtk.Keyboard.KeyLocation;
+import org.apache.pivot.wtk.Label;
+import org.apache.pivot.wtk.Mouse.Button;
+import org.apache.pivot.wtk.Window;
+
+import java.awt.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.Random;
 
-import org.apache.pivot.collections.Map;
-import org.apache.pivot.collections.Sequence;
-import org.apache.pivot.wtk.Application;
-import org.apache.pivot.wtk.Bounds;
-import org.apache.pivot.wtk.Component;
-import org.apache.pivot.wtk.ComponentKeyListener;
-import org.apache.pivot.wtk.Container;
-import org.apache.pivot.wtk.ContainerMouseListener;
-import org.apache.pivot.wtk.DesktopApplicationContext;
-import org.apache.pivot.wtk.Dialog;
-import org.apache.pivot.wtk.Dimensions;
-import org.apache.pivot.wtk.Display;
-import org.apache.pivot.wtk.HorizontalAlignment;
-import org.apache.pivot.wtk.Keyboard.KeyLocation;
-import org.apache.pivot.wtk.Label;
-import org.apache.pivot.wtk.Mouse;
 import org.apache.pivot.wtk.Mouse.Button;
-import org.apache.pivot.wtk.VerticalAlignment;
-import org.apache.pivot.wtk.Window;
-
-import ai.cogmission.mosaic.LayoutImpl;
-import ai.cogmission.mosaic.ModelLoader;
-import ai.cogmission.mosaic.MosaicEngine;
-import ai.cogmission.mosaic.Position;
-import ai.cogmission.mosaic.Surface;
-import ai.cogmission.mosaic.SurfaceImpl;
-import ai.cogmission.mosaic.refimpl.pivot.MosaicPane;
 
 public class MosaicPaneRefImpl extends Application.Adapter {
 
@@ -286,9 +272,10 @@ public class MosaicPaneRefImpl extends Application.Adapter {
         
         return label;
 	}
-	public static void main(String[] args) {
+	public static void main(String[] args) throws MalformedURLException {
 		if(args == null || args.length < 1 || args[0] == null) {
-            URL url = MosaicPaneRefImpl.class.getResource("testModel.txt");
+            //URL url = MosaicPaneRefImpl.class.getResource("testModel.txt");
+			URL url = new URL("file:///tmp/model.txt");;
             String path = Paths.get(url.toExternalForm()).toAbsolutePath().toString();
             try{
                 path = Paths.get(url.toURI()).toAbsolutePath().toString();

@@ -6,5 +6,5 @@ public interface EngineBuilder<T> {
 	 * 
 	 * @return	an implementation of {@link MosaicEngine}
 	 */
-	public MosaicEngine<T> build();
+	MosaicEngine<T> build();
 }

@@ -14,7 +14,7 @@ public interface MosaicEngine<T> {
 	 * Sets the area/bounds being managed.
 	 * @param surface	Surface representing a container of objects to layout.
 	 */
-	public void addSurface(Surface<T> surface);
+	void addSurface(Surface<T> surface);
 	
 	/**
 	 * Removes the {@link Surface} from the {@code MosaicEngine}'s {@link Collection}
@@ -22,6 +22,6 @@ public interface MosaicEngine<T> {
 	 * 
 	 * @param surface	the {@code Surface} to remove.
 	 */
-	public void removeSurface(Surface<T> surface);
+	void removeSurface(Surface<T> surface);
 	
 }

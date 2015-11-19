@@ -34,25 +34,25 @@ public class LayoutImpl<T> implements Layout {
 	private boolean isRelative;
 	
 	@JsonProperty
-	private List<String> cells = new ArrayList<String>();
+	private final List<String> cells = new ArrayList<>();
 	
 	@JsonProperty
-	private List<String> vDividers = new ArrayList<String>();
+	private final List<String> vDividers = new ArrayList<>();
 	
 	@JsonProperty
-	private List<String> hDividers = new ArrayList<String>();
+	private final List<String> hDividers = new ArrayList<>();
 	
 	/** List of all horizontal Dividers */
-    private List<Divider<T>> horizontalDividers = new ArrayList<Divider<T>>();
+    private final List<Divider<T>> horizontalDividers = new ArrayList<>();
 	
 	/** List of all vertical Dividers */
-    private List<Divider<T>> verticalDividers = new ArrayList<Divider<T>>();
+    private final List<Divider<T>> verticalDividers = new ArrayList<>();
 	
 	/** The list of Nodes */
-	private List<Node<T>> nodeList = new ArrayList<Node<T>>();
+	private final List<Node<T>> nodeList = new ArrayList<>();
 	
-	private Map<String, T> objectIDs = new LinkedHashMap<String, T>();
-	private Map<T, String> typeObjectIDs = new LinkedHashMap<T, String>();
+	private final Map<String, T> objectIDs = new LinkedHashMap<>();
+	private final Map<T, String> typeObjectIDs = new LinkedHashMap<>();
 	
 	/** Assembles/contains {@link PathIterator.Path} objects */ 
 	private PathIterator<T> pathIterator;
@@ -99,7 +99,7 @@ public class LayoutImpl<T> implements Layout {
 		this.typeObjectIDs.putAll(other.typeObjectIDs);
 		
 		for(Node<T> n : other.nodeList) {
-			Node<T> newNode = new Node<T>(n);
+			Node<T> newNode = new Node<>(n);
 			this.nodeList.add(newNode);
 			if(other.root.stringID.equals(newNode.stringID)) {
 				this.root = newNode;
@@ -107,7 +107,7 @@ public class LayoutImpl<T> implements Layout {
 		}
 		
 		for(Divider<T> otherDivider : other.horizontalDividers) {
-			Divider<T> thisDivider = new Divider<T>(otherDivider);
+			Divider<T> thisDivider = new Divider<>(otherDivider);
 			for(Node<T> n : otherDivider.prevNodes) {
 				Node<T> local = getNode(n.stringID);
 				local.nextHorizontal = thisDivider;
@@ -122,7 +122,7 @@ public class LayoutImpl<T> implements Layout {
 		}
 		
 		for(Divider<T> otherDivider : other.verticalDividers) {
-			Divider<T> thisDivider = new Divider<T>(otherDivider);
+			Divider<T> thisDivider = new Divider<>(otherDivider);
 			for(Node<T> n : otherDivider.prevNodes) {
 				Node<T> local = getNode(n.stringID);
 				local.nextVertical = thisDivider;
@@ -137,7 +137,7 @@ public class LayoutImpl<T> implements Layout {
 		}
 		
 		//Hookup Perpendicular Joins
-		List<Divider<T>> aggregateList = new ArrayList<Divider<T>>(other.horizontalDividers);
+		List<Divider<T>> aggregateList = new ArrayList<>(other.horizontalDividers);
 		aggregateList.addAll(other.verticalDividers);
 		for(Divider<T> d : aggregateList) {
 			Divider<T> local = getDivider(d.stringID, d.isVertical);
@@ -154,23 +154,23 @@ public class LayoutImpl<T> implements Layout {
 		}
 		
 		//Copy the PathIterator
-		this.pathIterator = new PathIterator<T>(this, other.pathIterator);
+		this.pathIterator = new PathIterator<>(this, other.pathIterator);
 	}
 	
 	List<Node<T>> getNodes(List<String> ids) {
-		Set<Node<T>> nodes = new HashSet<Node<T>>();
+		Set<Node<T>> nodes = new HashSet<>();
 		for(String id : ids) {
 			nodes.add(getNode(id));
 		}
-		return new ArrayList<Node<T>>(nodes);
+		return new ArrayList<>(nodes);
 	}
 	
 	List<Divider<T>> getDividers(List<String> ids, boolean isVertical) {
-		Set<Divider<T>> divs = new HashSet<Divider<T>>();
+		Set<Divider<T>> divs = new HashSet<>();
 		for(String id : ids) {
 			divs.add(getDivider(id, isVertical));
 		}
-		return new ArrayList<Divider<T>>(divs);
+		return new ArrayList<>(divs);
 	}
 	
 	/**
@@ -236,7 +236,7 @@ public class LayoutImpl<T> implements Layout {
 	 */
 	PathIterator<T> getPathIterator() {
 		if(pathIterator == null) {
-			pathIterator = new PathIterator<T>();
+			pathIterator = new PathIterator<>();
 		}
 		return pathIterator;
 	}

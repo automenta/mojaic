@@ -28,9 +28,9 @@ import javafx.scene.paint.Color;
  * @param <T>
  */
 public class MosaicPane<T extends Node> extends Region {
-	private MosaicEngine<T> layoutEngine;
-	private Surface<T> surface;
-	private Group content;
+	private final MosaicEngine<T> layoutEngine;
+	private final Surface<T> surface;
+	private final Group content;
 	
 	/**
 	 * Constructs a new {@code MosaicPane}
@@ -55,7 +55,7 @@ public class MosaicPane<T extends Node> extends Region {
 		if(engine == null || surface == null) {
 			this.layoutEngine = new MosaicEngineBuilder<T>().build();
 			
-			MosaicSurfaceBuilder<T> builder = new MosaicSurfaceBuilder<T>();
+			MosaicSurfaceBuilder<T> builder = new MosaicSurfaceBuilder<>();
 			this.surface = builder
 				.useIntegerPrecision(false)
 				.cornerClickRadius(5)
@@ -74,27 +74,20 @@ public class MosaicPane<T extends Node> extends Region {
 			this.content = group;
 		}
 		
-		layoutBoundsProperty().addListener(new ChangeListener<Bounds>() {
-        	@Override
-			public void changed(ObservableValue<? extends Bounds> arg0, Bounds arg1, Bounds arg2) {
-        		if(arg2.getWidth() == 0 || arg2.getHeight() == 0) return;
-				MosaicPane.this.surface.setArea(new Rectangle2D.Double(0, 0, arg2.getWidth(), arg2.getHeight()));
-				MosaicPane.this.surface.requestLayout();
-			}
-        	
+		layoutBoundsProperty().addListener((arg0, arg1, arg2) -> {
+            if(arg2.getWidth() == 0 || arg2.getHeight() == 0) return;
+            MosaicPane.this.surface.setArea(new Rectangle2D.Double(0, 0, arg2.getWidth(), arg2.getHeight()));
+            MosaicPane.this.surface.requestLayout();
         });
         
-        addEventHandler(MouseEvent.ANY, new EventHandler<MouseEvent>() {
-        	@Override
-			public void handle(MouseEvent evt) {
-        		if(evt.getEventType().equals(MouseEvent.MOUSE_PRESSED)) {
-        			MosaicPane.this.surface.mousePressed(evt.getX(), evt.getY());
-				}else if(evt.getEventType().equals(MouseEvent.MOUSE_DRAGGED)) {
-					MosaicPane.this.surface.mouseDragged(evt.getX(), evt.getY());
-				}else if(evt.getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
-					MosaicPane.this.surface.mouseReleased();
-				}
-			}
+        addEventHandler(MouseEvent.ANY, evt -> {
+            if(evt.getEventType().equals(MouseEvent.MOUSE_PRESSED)) {
+                MosaicPane.this.surface.mousePressed(evt.getX(), evt.getY());
+            }else if(evt.getEventType().equals(MouseEvent.MOUSE_DRAGGED)) {
+                MosaicPane.this.surface.mouseDragged(evt.getX(), evt.getY());
+            }else if(evt.getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
+                MosaicPane.this.surface.mouseReleased();
+            }
         });
 	}
 	
@@ -137,61 +130,59 @@ public class MosaicPane<T extends Node> extends Region {
 	}
 	
 	public SurfaceListener<T> getSurfaceObserver() {
-		SurfaceListener<T> l = new SurfaceListener<T>() {
-			public void changed(ChangeType changeType, Node n, String id, Rectangle2D r1, Rectangle2D r2) {
-				switch(changeType) {
-			    	case REMOVE_DISCARD: {
-			    		content.getChildren().remove(n);
-			    		requestLayout();
-			    		break;
-			    	}
-			    	case RESIZE_RELOCATE: {
-			    		n.resizeRelocate(r2.getX(), r2.getY(), r2.getWidth(), r2.getHeight());
-						requestLayout();
-				        
-				        break;
-			    	}
-			    	case ADD_COMMIT: {
-			    		content.getChildren().add(n);
-			    		n.resizeRelocate(r2.getX(), r2.getY(), r2.getWidth(), r2.getHeight());
-						requestLayout();
-				        break;
-			    	}
-			    	case MOVE_BEGIN: {
-			    		DropShadow shadow = new DropShadow();
-			    		shadow.setOffsetX(10);
-			    		shadow.setOffsetY(10);
-			    		shadow.setRadius(5);
-			    		shadow.setColor(Color.GRAY);
-			    		n.setEffect(shadow);
-			    		n.toFront();
-			    		n.setOpacity(.5);
-			    		break;
-			    	}
-			    	case RELOCATE_DRAG_TARGET: {
-			    		n.resizeRelocate(r2.getX(), r2.getY(), r2.getWidth(), r2.getHeight());
-						requestLayout();
-			    		break;
-			    	}
-			    	case RESIZE_DRAG_TARGET: {
-			    		n.resizeRelocate(r2.getX(), r2.getY(), r2.getWidth(), r2.getHeight());
-						requestLayout();
-				        break;
-			    	}
-			    	case MOVE_END: {
-			    		n.setOpacity(1);
-			    		n.setEffect(null);
-			    		break;
-			    	}
-			    	case ANIMATE_RESIZE_RELOCATE: {
-			    		n.resizeRelocate(r2.getX(), r2.getY(), r2.getWidth(), r2.getHeight());
-						requestLayout();
-				        break;
-			    	}
-			    	default: break;
-		    	}
-			}
-		};
+		SurfaceListener<T> l = (changeType, n, id, r1, r2) -> {
+            switch(changeType) {
+                case REMOVE_DISCARD: {
+                    content.getChildren().remove(n);
+                    requestLayout();
+                    break;
+                }
+                case RESIZE_RELOCATE: {
+                    n.resizeRelocate(r2.getX(), r2.getY(), r2.getWidth(), r2.getHeight());
+                    requestLayout();
+
+                    break;
+                }
+                case ADD_COMMIT: {
+                    content.getChildren().add(n);
+                    n.resizeRelocate(r2.getX(), r2.getY(), r2.getWidth(), r2.getHeight());
+                    requestLayout();
+                    break;
+                }
+                case MOVE_BEGIN: {
+                    DropShadow shadow = new DropShadow();
+                    shadow.setOffsetX(10);
+                    shadow.setOffsetY(10);
+                    shadow.setRadius(5);
+                    shadow.setColor(Color.GRAY);
+                    n.setEffect(shadow);
+                    n.toFront();
+                    n.setOpacity(.5);
+                    break;
+                }
+                case RELOCATE_DRAG_TARGET: {
+                    n.resizeRelocate(r2.getX(), r2.getY(), r2.getWidth(), r2.getHeight());
+                    requestLayout();
+                    break;
+                }
+                case RESIZE_DRAG_TARGET: {
+                    n.resizeRelocate(r2.getX(), r2.getY(), r2.getWidth(), r2.getHeight());
+                    requestLayout();
+                    break;
+                }
+                case MOVE_END: {
+                    n.setOpacity(1);
+                    n.setEffect(null);
+                    break;
+                }
+                case ANIMATE_RESIZE_RELOCATE: {
+                    n.resizeRelocate(r2.getX(), r2.getY(), r2.getWidth(), r2.getHeight());
+                    requestLayout();
+                    break;
+                }
+                default: break;
+            }
+        };
 		return l;
 	}
 }

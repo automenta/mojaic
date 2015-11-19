@@ -1,14 +1,9 @@
 package ai.cogmission.mosaic;
 
-import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import java.awt.geom.Rectangle2D;
+import java.util.*;
 
 /**
  * The divider between objects being laid out. There are no metaphors 
@@ -22,10 +17,10 @@ class Divider<T> extends Element<T> {
 	
 	final static String EMPTY = "empty";
 	
-	List<Node<T>> prevNodes = new ArrayList<Node<T>>();
-	List<Node<T>> nextNodes = new ArrayList<Node<T>>();
-	Set<Divider<T>> leadingJoins = new HashSet<Divider<T>>();
-	Set<Divider<T>> trailingJoins = new HashSet<Divider<T>>();
+	final List<Node<T>> prevNodes = new ArrayList<>();
+	final List<Node<T>> nextNodes = new ArrayList<>();
+	final Set<Divider<T>> leadingJoins = new HashSet<>();
+	final Set<Divider<T>> trailingJoins = new HashSet<>();
 	
 	Comparator<Node<T>> verticalComparator;
 	Comparator<Node<T>> horizontalComparator;
@@ -79,21 +74,17 @@ class Divider<T> extends Element<T> {
 	}
 	
 	private void createComparators() {
-		verticalComparator = new Comparator<Node<T>>() {
-			public int compare(Node<T> n0, Node<T> n1) {
-				if(n0.r.y > n1.r.y) return 1;
-				else if(n0.r.y < n1.r.y) return -1;
-				return 0;
-			}
-		};
+		verticalComparator = (n0, n1) -> {
+            if(n0.r.y > n1.r.y) return 1;
+            else if(n0.r.y < n1.r.y) return -1;
+            return 0;
+        };
 		
-		horizontalComparator = new Comparator<Node<T>>() {
-			public int compare(Node<T> n0, Node<T> n1) {
-				if(n0.r.x > n1.r.x) return 1;
-				else if(n0.r.x < n1.r.x) return -1;
-				return 0;
-			}
-		};
+		horizontalComparator = (n0, n1) -> {
+            if(n0.r.x > n1.r.x) return 1;
+            else if(n0.r.x < n1.r.x) return -1;
+            return 0;
+        };
 	}
 	
 	/**

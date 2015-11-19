@@ -8,8 +8,8 @@ package ai.cogmission.mosaic;
  * 				generics resolution.
  */
 interface ElementVisitor <T> {
-    public void visitHorizontal(Node<T> n);
-    public void visitHorizontal(Divider<T> d);
-    public void visitVertical(Node<T> n);
-    public void visitVertical(Divider<T> d);
+    void visitHorizontal(Node<T> n);
+    void visitHorizontal(Divider<T> d);
+    void visitVertical(Node<T> n);
+    void visitVertical(Divider<T> d);
 }

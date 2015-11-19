@@ -38,7 +38,7 @@ public class ModelLoader {
 	String filePath;
 	String homeFilePath;
 	
-	private Map<String, String[]> namedModels = new TreeMap<String, String[]>();
+	private final Map<String, String[]> namedModels = new TreeMap<>();
 	
 	public ModelLoader(String filepath) {
 		this.filePath = filepath;
@@ -63,7 +63,7 @@ public class ModelLoader {
 	}
 	
 	public List<String> getModelNames() {
-		return new ArrayList<String>(namedModels.keySet());
+		return new ArrayList<>(namedModels.keySet());
 	}
 	
 	private void loadModels() {
