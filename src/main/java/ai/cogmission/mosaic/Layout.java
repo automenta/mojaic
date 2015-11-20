@@ -1,8 +1,5 @@
 package ai.cogmission.mosaic;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-
 /**
  * An aggregation of layout specifications used as a container to bulk add
  * specifications to a {@link Surface}
@@ -63,7 +60,7 @@ public interface Layout {
 	 * @param id	the id correlated to the returned specification string.
 	 * @return		the comma-separated string representing the correlated layout.
 	 */
-	@JsonIgnore
+
 	String getCell(String id);
 	
 }

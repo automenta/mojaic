@@ -7,18 +7,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-@JsonAutoDetect
 public class SurfaceImpl<T> extends SurfacePriviledged<T> {
-	private enum AddMode { UNSET, RELATIVE, ABSOLUTE };
-	
-	
+	private enum AddMode { UNSET, RELATIVE, ABSOLUTE }
+
+
 	/** Flag indicating first layout run */
     private boolean isInit = true;
 
@@ -26,51 +19,49 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
     private boolean isDragging;
     
     /** the size opposite to its direction */
-    @JsonProperty
+    
     private double dividerSize = 3;
     
     /** Flag for offset values being added to x, y */
-    @JsonProperty
+    
     private boolean useSurfaceOffset;
     
     /** Flag for indicating results are integer precision */
-    @JsonProperty
+    
     private boolean useIntegerPrecision;
     
     /** Flag indicating that this {@code SurfaceImpl} was created from serialization */
     public boolean constitutedFromSerialization;
     
     /** Flag indicating that this {@code SurfaceImpl} is undergoing a transactive operation */
-    @JsonIgnore
+    
     private boolean locked;
     
     /** Flag indicating that a recent move operation produced a valid drop condition */
-    @JsonIgnore
+    
     private boolean hasValidDrop;
     
     /** the minimum distance from another divider before it snaps */
-    @JsonProperty
+    
     private double snapDistance = 15;
     
     /** max distance from a corner for drag recognition */
-    @JsonProperty
+    
     private double cornerClickRadius = 3;
     
     /** the minimum distance from the outer edge of the surface before adding a new divider */
-    @JsonProperty
+    
 	private final Point2D.Double boundaryDividerCondition = new Point2D.Double(20, 20);
 	
 	/** List of {@link SurfaceListener}s. */
 	private final ChangeListenerList listeners = new ChangeListenerList();
 	
 	/** Offset point from (0,0) */
-	@JsonProperty
+	
     private Point2D.Double surfaceOffset = new Point2D.Double(0, 0);
     
     /** Rectangle containing the bounds of this surface. */
-	@JsonSerialize(using = AreaSerializer.class)
-	@JsonDeserialize(using = AreaDeserializer.class)
-    private Rectangle2D.Double area = new Rectangle2D.Double(0, 0, 0, 0);
+    private final Rectangle2D.Double area = new Rectangle2D.Double(0, 0, 0, 0);
     
     /** The current engine this Surface is added to */
     private MosaicEngineImpl<T> engine;
@@ -85,7 +76,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
     private final Map<Divider<T>, List<Divider<T>>> tempOverlapSearchMap = new HashMap<>();
        
     /** Used for persistence handling and temporary object storage prior to addition to engine */
-    @JsonProperty
+    
     private LayoutImpl<T> layout;
     
     /** Used for saving of state for animated rollback if needed */
@@ -94,7 +85,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
     /** Used for saving the state during move - after removal of move node */
     private LayoutImpl<T> interimLayoutSnapshot;
     
-    @JsonIgnore
+    
     private String nodeCursor;
     
     /**
@@ -134,7 +125,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	/**
 	 * Called from the engine remove logic to set the root node if
 	 * the previous root node has been removed.
-	 * 
+	 *
 	 * @param n 	the new root
 	 */
 	void setRoot(Node<T> n) {
@@ -195,53 +186,53 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 		this.layout = new LayoutImpl<>(layoutCopy);
 	}
 	
-	/**
-	 * Returns a serialized form of this {@code Surface} in
-	 * JSON format.
-	 * 
-	 * @return	this Surface in serialized form
-	 */
-	public String serialize() {
-		updateLayoutSerializables(false);
-		
-		String json = null;
-		ObjectMapper mapper = new ObjectMapper();
-		try {
-			json = mapper.writeValueAsString(this);
-			System.out.println(mapper.writer().withDefaultPrettyPrinter().writeValueAsString(this));
-		}catch(Exception e) {
-			e.printStackTrace();
-		}
-		
-		return json;
-	}
-	
-	/**
-	 * Returns a {@code Surface} implementation from a JSON String.
-	 * 
-	 * @param jsonSurface
-	 * @return	the deserialized {@code Surface}
-	 */
-	@SuppressWarnings("unchecked")
-	public SurfaceImpl<T> deSerialize(String jsonSurface) {
-		ObjectMapper om = new ObjectMapper();
-		SurfaceImpl<T> si = null;
-		try {
-			si = (SurfaceImpl<T>)om.readValue(jsonSurface, SurfaceImpl.class);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		si.createNodesFromSerialized();
-		si.createDividersFromSerialized();
-		
-		si.constitutedFromSerialization = true;
-		si.setIsInit(false);
-		
-		si.getPathIterator().assemblePaths(si.getRoot());
-		
-		return si;
-	}
+//	/**
+//	 * Returns a serialized form of this {@code Surface} in
+//	 * JSON format.
+//	 *
+//	 * @return	this Surface in serialized form
+//	 */
+//	public String serialize() {
+//		updateLayoutSerializables(false);
+//
+//		String json = null;
+//		ObjectMapper mapper = new ObjectMapper();
+//		try {
+//			json = mapper.writeValueAsString(this);
+//			System.out.println(mapper.writer().withDefaultPrettyPrinter().writeValueAsString(this));
+//		}catch(Exception e) {
+//			e.printStackTrace();
+//		}
+//
+//		return json;
+//	}
+//
+//	/**
+//	 * Returns a {@code Surface} implementation from a JSON String.
+//	 *
+//	 * @param jsonSurface
+//	 * @return	the deserialized {@code Surface}
+//	 */
+//	@SuppressWarnings("unchecked")
+//	public SurfaceImpl<T> deSerialize(String jsonSurface) {
+//		ObjectMapper om = new ObjectMapper();
+//		SurfaceImpl<T> si = null;
+//		try {
+//			si = (SurfaceImpl<T>)om.readValue(jsonSurface, SurfaceImpl.class);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//
+//		si.createNodesFromSerialized();
+//		si.createDividersFromSerialized();
+//
+//		si.constitutedFromSerialization = true;
+//		si.setIsInit(false);
+//
+//		si.getPathIterator().assemblePaths(si.getRoot());
+//
+//		return si;
+//	}
 	
 	/**
 	 * Returns a deep copy snapshot of this {@code Surface}'s 
@@ -375,7 +366,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	 * 
 	 * @return	true if valid drop exists, false if not.
 	 */
-	@JsonIgnore
+	
 	@Override
 	public boolean hasValidDrop() {
 		return hasValidDrop;
@@ -582,7 +573,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	 * @return	true if locked, false if not.
 	 */
 	@Override
-	@JsonIgnore
+	
 	public boolean isLocked() {
 		return locked;
 	}
@@ -592,7 +583,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	 * mutation is underway
 	 */
 	@Override
-	@JsonIgnore
+	
 	void setLocked(boolean b) {
 		this.locked = b;
 	}
@@ -621,7 +612,13 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	private void createNodeList() {
 		List<Node<T>> nodeList = getNodeList();
 		for(String id : layout.stringKeySet()) {
-			String[] spec = layout.getCell(id).split(LayoutConstants.CELL_PTRN);
+
+			String cell = layout.getCell(id);
+			if (cell == null) {
+				continue;
+			}
+
+			String[] spec = cell.split(LayoutConstants.CELL_PTRN);
 			Node<T> node = null;
 			if(spec.length > LayoutConstants.MAX_H) {
 				node = new Node<>(layout.get(id), id,
@@ -648,148 +645,146 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 		}
 	}
 	
-	private void createNodesFromSerialized() {
-		List<Node<T>> nodeList = getNodeList();
-		for(String id : layout.stringKeySet()) {
-			String[] spec = layout.getCell(id).split(LayoutConstants.CELL_PTRN);
-			Node<T> node = null;
-			node = new Node<>(layout.get(id), id,
-					Double.parseDouble(spec[LayoutConstants.X]),
-					Double.parseDouble(spec[LayoutConstants.Y]),
-					Double.parseDouble(spec[LayoutConstants.W]),
-					Double.parseDouble(spec[LayoutConstants.H]),
-					Double.parseDouble(spec[LayoutConstants.MIN_W]),
-					Double.parseDouble(spec[LayoutConstants.MAX_W]),
-					Double.parseDouble(spec[LayoutConstants.MIN_H]),
-					Double.parseDouble(spec[LayoutConstants.MAX_H]),
-					Double.parseDouble(spec[LayoutConstants.H_WT]),
-					Double.parseDouble(spec[LayoutConstants.V_WT]));
-			
-			if(node.percentX == 0 && node.percentY == 0 && node.r.x == 0 && node.r.y == 0) {
-				layout.setRoot(node);
-			}
-			nodeList.add(node);
-		}
-		
-		List<Node<T>> targetLessNodes = createTargetlessNodes();
-		nodeList.addAll(targetLessNodes);
-	}
+//	private void createNodesFromSerialized() {
+//		List<Node<T>> nodeList = getNodeList();
+//		for(String id : layout.stringKeySet()) {
+//			String[] spec = layout.getCell(id).split(LayoutConstants.CELL_PTRN);
+//			Node<T> node = null;
+//			node = new Node<>(layout.get(id), id,
+//					Double.parseDouble(spec[LayoutConstants.X]),
+//					Double.parseDouble(spec[LayoutConstants.Y]),
+//					Double.parseDouble(spec[LayoutConstants.W]),
+//					Double.parseDouble(spec[LayoutConstants.H]),
+//					Double.parseDouble(spec[LayoutConstants.MIN_W]),
+//					Double.parseDouble(spec[LayoutConstants.MAX_W]),
+//					Double.parseDouble(spec[LayoutConstants.MIN_H]),
+//					Double.parseDouble(spec[LayoutConstants.MAX_H]),
+//					Double.parseDouble(spec[LayoutConstants.H_WT]),
+//					Double.parseDouble(spec[LayoutConstants.V_WT]));
+//
+//			if(node.percentX == 0 && node.percentY == 0 && node.r.x == 0 && node.r.y == 0) {
+//				layout.setRoot(node);
+//			}
+//			nodeList.add(node);
+//		}
+//
+//		List<Node<T>> targetLessNodes = createTargetlessNodes();
+//		nodeList.addAll(targetLessNodes);
+//	}
 	
-	private List<Node<T>> createTargetlessNodes() {
-		List<Node<T>> nodeList = getNodeList();
-		List<Node<T>> retList = new ArrayList<>();
-		for(String cell : layout.getCells()) {
-			Node<T> node = createSerializedNode(cell);
-			if(!nodeList.contains(node)) {
-				retList.add(node);
-			}
-		}
-		return retList;
-	}
+//	private List<Node<T>> createTargetlessNodes() {
+//		List<Node<T>> nodeList = getNodeList();
+//		List<Node<T>> retList = new ArrayList<>();
+//		for(String cell : layout.getCells()) {
+//			Node<T> node = createSerializedNode(cell);
+//			if(!nodeList.contains(node)) {
+//				retList.add(node);
+//			}
+//		}
+//		return retList;
+//	}
 	
-	private Node<T> createSerializedNode(String layoutSpec) {
-		String[] spec = layoutSpec.split(LayoutConstants.CELL_PTRN);
-		String id = layout.parse(layoutSpec, LayoutConstants.ID);
-		Node<T> node = new Node<>(layout.get(id), id,
-				Double.parseDouble(spec[LayoutConstants.X]),
-				Double.parseDouble(spec[LayoutConstants.Y]),
-				Double.parseDouble(spec[LayoutConstants.W]),
-				Double.parseDouble(spec[LayoutConstants.H]),
-				Double.parseDouble(spec[LayoutConstants.MIN_W]),
-				Double.parseDouble(spec[LayoutConstants.MAX_W]),
-				Double.parseDouble(spec[LayoutConstants.MIN_H]),
-				Double.parseDouble(spec[LayoutConstants.MAX_H]),
-				Double.parseDouble(spec[LayoutConstants.H_WT]),
-				Double.parseDouble(spec[LayoutConstants.V_WT]));
-		
-		if(node.percentX == 0 && node.percentY == 0 && node.r.x == 0 && node.r.y == 0) {
-			layout.setRoot(node);
-		}
-		
-		return node;
-	}
-	
-	private void createDividersFromSerialized() {
-		List<Divider<T>> horizontalDividers = getHorizontalDividers();
-		List<Divider<T>> verticalDividers = getVerticalDividers();
-		for(String divStr : layout.getSerializedHorizontalDividers()) {
-			Divider<T> d = createDividerFromSerialized(divStr, false);
-			horizontalDividers.add(d);
-		}
-		
-		for(String divStr : layout.getSerializedVerticalDividers()) {
-			Divider<T> d = createDividerFromSerialized(divStr, true);
-			verticalDividers.add(d);
-		}
-		
-		for(String divStr : layout.getSerializedHorizontalDividers()) {
-			createSerializedJoins(getDivider(layout.parse(divStr, LayoutConstants.ID), false), divStr, false);
-		}
-		
-		for(String divStr : layout.getSerializedVerticalDividers()) {
-			createSerializedJoins(getDivider(layout.parse(divStr, LayoutConstants.ID), true), divStr, true);
-		}
-	}
-	
-	private Divider<T> createDividerFromSerialized(String divStr, boolean isVertical) {
-		String[] spec = divStr.split(LayoutConstants.CELL_PTRN);
-		Divider<T> d = new Divider<>();
-		d.dividerSize = dividerSize;
-		d.isVertical = isVertical;
-		d.setId(Integer.parseInt(spec[LayoutConstants.ID]));
-		
-		Rectangle2D.Double r = new Rectangle2D.Double(
-			Double.parseDouble(spec[LayoutConstants.X]),
-			Double.parseDouble(spec[LayoutConstants.Y]),
-			Double.parseDouble(spec[LayoutConstants.W]),
-			Double.parseDouble(spec[LayoutConstants.H]));
-		d.r = r;
-		
-		String[] prevNodeIds = spec[LayoutConstants.PRV_N].split(LayoutConstants.SUB_PTRN);
-		for(String nodeId : prevNodeIds) {
-			if(nodeId.equals(Divider.EMPTY)) continue;
-			
-			Node<T> node = layout.getNode(nodeId);
-			d.addPrevious(node);
-			if(d.isVertical) {
-				node.nextVertical = d;
-			}else{
-				node.nextHorizontal = d;
-			}
-		}
-		String[] nextNodeIds = spec[LayoutConstants.NXT_N].split(LayoutConstants.SUB_PTRN);
-		for(String nodeId : nextNodeIds) {
-			if(nodeId.equals(Divider.EMPTY)) continue;
-			Node<T> node = getNode(nodeId);
-			d.addNext(node);
-			if(d.isVertical) {
-				node.prevVertical = d;
-			}else{
-				node.prevHorizontal = d;
-			}
-		}
-		
-		return d;
-	}
-	
-	private void createSerializedJoins(Divider<T> d, String divStr, boolean isVertical) {
-		String[] spec = divStr.split(LayoutConstants.CELL_PTRN);
-		String[] leadingJoinIds = spec[LayoutConstants.LED_J].split(LayoutConstants.SUB_PTRN);
-		for(String divId : leadingJoinIds) {
-			if(divId.equals(Divider.EMPTY)) continue;
-			Divider<T> div = getDivider(divId, !isVertical);
-			d.leadingJoins.add(div);
-			div.trailingJoin = d;
-		}
-		
-		String[] trailingJoinIds = spec[LayoutConstants.TRL_J].split(LayoutConstants.SUB_PTRN);
-		for(String divId : trailingJoinIds) {
-			if(divId.equals(Divider.EMPTY)) continue;
-			Divider<T> div = getDivider(divId, !isVertical);
-			d.trailingJoins.add(div);
-			div.leadingJoin = d;
-		}
-	}
+//	private Node<T> createSerializedNode(String layoutSpec) {
+//		String[] spec = layoutSpec.split(LayoutConstants.CELL_PTRN);
+//		String id = layout.parse(layoutSpec, LayoutConstants.ID);
+//		Node<T> node = new Node<>(layout.get(id), id,
+//				Double.parseDouble(spec[LayoutConstants.X]),
+//				Double.parseDouble(spec[LayoutConstants.Y]),
+//				Double.parseDouble(spec[LayoutConstants.W]),
+//				Double.parseDouble(spec[LayoutConstants.H]),
+//				Double.parseDouble(spec[LayoutConstants.MIN_W]),
+//				Double.parseDouble(spec[LayoutConstants.MAX_W]),
+//				Double.parseDouble(spec[LayoutConstants.MIN_H]),
+//				Double.parseDouble(spec[LayoutConstants.MAX_H]),
+//				Double.parseDouble(spec[LayoutConstants.H_WT]),
+//				Double.parseDouble(spec[LayoutConstants.V_WT]));
+//
+//		if(node.percentX == 0 && node.percentY == 0 && node.r.x == 0 && node.r.y == 0) {
+//			layout.setRoot(node);
+//		}
+//
+//		return node;
+//	}
+//
+//	private void createDividersFromSerialized() {
+//		List<Divider<T>> horizontalDividers = getHorizontalDividers();
+//		List<Divider<T>> verticalDividers = getVerticalDividers();
+//		for(String divStr : layout.getSerializedHorizontalDividers()) {
+//			Divider<T> d = createDividerFromSerialized(divStr, false);
+//			horizontalDividers.add(d);
+//		}
+//
+//		for(String divStr : layout.getSerializedVerticalDividers()) {
+//			Divider<T> d = createDividerFromSerialized(divStr, true);
+//			verticalDividers.add(d);
+//		}
+//
+//		for(String divStr : layout.getSerializedHorizontalDividers()) {
+//			createSerializedJoins(getDivider(layout.parse(divStr, LayoutConstants.ID), false), divStr, false);
+//		}
+//
+//		for(String divStr : layout.getSerializedVerticalDividers()) {
+//			createSerializedJoins(getDivider(layout.parse(divStr, LayoutConstants.ID), true), divStr, true);
+//		}
+//	}
+//
+//	private Divider<T> createDividerFromSerialized(String divStr, boolean isVertical) {
+//		String[] spec = divStr.split(LayoutConstants.CELL_PTRN);
+//		Divider<T> d = new Divider(Integer.parseInt(spec[LayoutConstants.ID]));
+//		d.dividerSize = dividerSize;
+//		d.isVertical = isVertical;
+//
+//
+//		d.r.setRect(Double.parseDouble(spec[LayoutConstants.X]),
+//				Double.parseDouble(spec[LayoutConstants.Y]),
+//				Double.parseDouble(spec[LayoutConstants.W]),
+//				Double.parseDouble(spec[LayoutConstants.H]));
+//
+//		String[] prevNodeIds = spec[LayoutConstants.PRV_N].split(LayoutConstants.SUB_PTRN);
+//		for(String nodeId : prevNodeIds) {
+//			if(nodeId.equals(Divider.EMPTY)) continue;
+//
+//			Node<T> node = layout.getNode(nodeId);
+//			d.addPrevious(node);
+//			if(d.isVertical) {
+//				node.nextVertical = d;
+//			}else{
+//				node.nextHorizontal = d;
+//			}
+//		}
+//		String[] nextNodeIds = spec[LayoutConstants.NXT_N].split(LayoutConstants.SUB_PTRN);
+//		for(String nodeId : nextNodeIds) {
+//			if(nodeId.equals(Divider.EMPTY)) continue;
+//			Node<T> node = getNode(nodeId);
+//			d.addNext(node);
+//			if(d.isVertical) {
+//				node.prevVertical = d;
+//			}else{
+//				node.prevHorizontal = d;
+//			}
+//		}
+//
+//		return d;
+//	}
+//
+//	private void createSerializedJoins(Divider<T> d, String divStr, boolean isVertical) {
+//		String[] spec = divStr.split(LayoutConstants.CELL_PTRN);
+//		String[] leadingJoinIds = spec[LayoutConstants.LED_J].split(LayoutConstants.SUB_PTRN);
+//		for(String divId : leadingJoinIds) {
+//			if(divId.equals(Divider.EMPTY)) continue;
+//			Divider<T> div = getDivider(divId, !isVertical);
+//			d.leadingJoins.add(div);
+//			div.trailingJoin = d;
+//		}
+//
+//		String[] trailingJoinIds = spec[LayoutConstants.TRL_J].split(LayoutConstants.SUB_PTRN);
+//		for(String divId : trailingJoinIds) {
+//			if(divId.equals(Divider.EMPTY)) continue;
+//			Divider<T> div = getDivider(divId, !isVertical);
+//			d.trailingJoins.add(div);
+//			div.leadingJoin = d;
+//		}
+//	}
 	
 	/**
 	 * Checks the list of layout specs in the Layout object against the
@@ -805,7 +800,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 		}
 		
 		if(missingIds.size() > 0) {
-			throw new IllegalStateException("No layout spec found for ids: " + missingIds);
+			//throw new IllegalStateException("No layout spec found for ids: " + missingIds);
 		}
 		
 		//Check layout's with no objects/ID's to match		
@@ -817,7 +812,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 		}
 		
 		if(missingIds.size() > 0) {
-			throw new IllegalStateException("No <T> or ID found for ids: " + missingIds);
+			//throw new IllegalStateException("No <T> or ID found for ids: " + missingIds);
 		}
 	}
 	
@@ -839,7 +834,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 		}else{
 			String spec = layout.getCell(id);
 			if(spec != null) {
-				node = createSerializedNode(spec);
+				node = new Node(id, 0.25,0.25, 0.5,0.5); //createSerializedNode(spec);
 				node.setTarget(t);
 				getNodeList().add(node);
 			}
@@ -848,36 +843,36 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 		return this;
 	}
 	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Surface<T> addAll(List<T> tList, List<String> idList) {
-		if(tList.size() != idList.size()) {
-			throw new IllegalArgumentException("Object list size != id list size.");
-		}
-		
-		int i = 0;
-		for(String id : idList) {
-			T t = tList.get(i);
-			layout.put(id, t);
-			
-			Node<T> node = getNodeWithID(id);
-			if(node != null) {
-				//Set the target object on the node
-				node.setTarget(t);
-			}else{
-				String spec = layout.getCell(id);
-				if(spec != null) {
-					node = createSerializedNode(spec);
-					node.setTarget(t);
-					getNodeList().add(node);
-				}
-			}
-		}
-		
-		return this;
-	}
+//	/**
+//	 * {@inheritDoc}
+//	 */
+//	@Override
+//	public Surface<T> addAll(List<T> tList, List<String> idList) {
+//		if(tList.size() != idList.size()) {
+//			throw new IllegalArgumentException("Object list size != id list size.");
+//		}
+//
+//		int i = 0;
+//		for(String id : idList) {
+//			T t = tList.get(i);
+//			layout.put(id, t);
+//
+//			Node<T> node = getNodeWithID(id);
+//			if(node != null) {
+//				//Set the target object on the node
+//				node.setTarget(t);
+//			}else{
+//				String spec = layout.getCell(id);
+//				if(spec != null) {
+//					node = createSerializedNode(spec);
+//					node.setTarget(t);
+//					getNodeList().add(node);
+//				}
+//			}
+//		}
+//
+//		return this;
+//	}
 	
 	private Node<T> getNodeWithID(String id) {
 		for(Node<T> n : getNodeList()) {
@@ -902,9 +897,9 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 			addMode = AddMode.RELATIVE;
 		}
 		
-		if(layout == null) {
-			layout = new LayoutImpl<>(true);
-		}
+//		if(layout == null) {
+//			layout = new LayoutImpl<>(new Node(r, 0,0,1,1), true);
+//		}
 		
 		layout.addCell(id, percentX, percentY, percentWidth, percentHeight, minW, maxW, minH, maxH);
 		
@@ -927,9 +922,9 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 			addMode = AddMode.ABSOLUTE;
 		}
 		
-		if(layout == null) {
-			layout = new LayoutImpl<>(false);
-		}
+//		if(layout == null) {
+//			layout = new LayoutImpl(false);
+//		}
 		
 		layout.addCell(id, x, y, width, height, minW, maxW, minH, maxH);
 		
@@ -1020,7 +1015,6 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	@JsonIgnore
 	public Surface<T> setLayout(Layout layout) {
 		this.layout = (LayoutImpl<T>)layout;
 		return this;
@@ -1031,7 +1025,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	 * 
 	 * @return	the current {@link Layout} currently set on this {@code Surface}
 	 */
-	@JsonIgnore
+	
 	public LayoutImpl<T> getLayout() {
 		return this.layout;
 	}
@@ -1167,7 +1161,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	 */
 	@Override
 	public void setArea(Rectangle2D.Double r) {
-		this.area = r;
+		this.area.setRect(r);
 	}
 	
 	/**
@@ -1323,7 +1317,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 		}
 	}
 	
-	@JsonIgnore
+	
 	public String getCursor() {
 		if(nodeCursor == null) {
 			nodeCursor = getRoot().stringID;
@@ -1331,7 +1325,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 		return nodeCursor;
 	}
 	
-	@JsonIgnore
+	
 	public void setCursor(String id) {
 		this.nodeCursor = id;
 	}

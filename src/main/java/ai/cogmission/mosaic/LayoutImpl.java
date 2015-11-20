@@ -1,17 +1,9 @@
 package ai.cogmission.mosaic;
 
+import java.util.*;
+
 import static ai.cogmission.mosaic.LayoutConstants.ID;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Set;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 
 /**
@@ -30,16 +22,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class LayoutImpl<T> implements Layout {
 	
 	
-	@JsonProperty
+	
 	private boolean isRelative;
 	
-	@JsonProperty
+	
 	private final List<String> cells = new ArrayList<>();
 	
-	@JsonProperty
+	
 	private final List<String> vDividers = new ArrayList<>();
 	
-	@JsonProperty
+	
 	private final List<String> hDividers = new ArrayList<>();
 	
 	/** List of all horizontal Dividers */
@@ -55,19 +47,11 @@ public class LayoutImpl<T> implements Layout {
 	private final Map<T, String> typeObjectIDs = new LinkedHashMap<>();
 	
 	/** Assembles/contains {@link PathIterator.Path} objects */ 
-	private PathIterator<T> pathIterator;
+	private final PathIterator<T> pathIterator = new PathIterator<>();
 	
 	/** The root node */
-	@JsonIgnore
 	private Node<T> root;
-	
-	
-	/**
-	 * Used by JSON serialization mechanism
-	 */
-	@SuppressWarnings("unused")
-	private LayoutImpl() {}
-	
+
 	
 	/**
 	 * Constructs a new {@link LayoutImpl} in the "mode"
@@ -83,29 +67,26 @@ public class LayoutImpl<T> implements Layout {
 	 * 
 	 * @param isRelative	true if relative, false if absolute
 	 */
-	public LayoutImpl(boolean isRelative) {
+	public LayoutImpl(Node<T> root, boolean isRelative) {
+		this.root = root;
 		this.isRelative = isRelative;
 	}
 	
 	/**
 	 * Copy constructor. This constructor returns an identical
 	 * copy of the specified {@link Layout}.
-	 * 
+	 *
 	 * @param other {@link Layout} to copy
 	 */
 	public LayoutImpl(LayoutImpl<T> other) {
+		this(other.getRoot(), other.isRelative());
+
 		this.isRelative = other.isRelative;
 		this.objectIDs.putAll(other.objectIDs);
 		this.typeObjectIDs.putAll(other.typeObjectIDs);
-		
-		for(Node<T> n : other.nodeList) {
-			Node<T> newNode = new Node<>(n);
-			this.nodeList.add(newNode);
-			if(other.root.stringID.equals(newNode.stringID)) {
-				this.root = newNode;
-			}
-		}
-		
+
+		other.nodeList.forEach(n -> this.nodeList.add(new Node(n)));
+
 		for(Divider<T> otherDivider : other.horizontalDividers) {
 			Divider<T> thisDivider = new Divider<>(otherDivider);
 			for(Node<T> n : otherDivider.prevNodes) {
@@ -120,7 +101,7 @@ public class LayoutImpl<T> implements Layout {
 			}
 			this.horizontalDividers.add(thisDivider);
 		}
-		
+
 		for(Divider<T> otherDivider : other.verticalDividers) {
 			Divider<T> thisDivider = new Divider<>(otherDivider);
 			for(Node<T> n : otherDivider.prevNodes) {
@@ -135,7 +116,7 @@ public class LayoutImpl<T> implements Layout {
 			}
 			this.verticalDividers.add(thisDivider);
 		}
-		
+
 		//Hookup Perpendicular Joins
 		List<Divider<T>> aggregateList = new ArrayList<>(other.horizontalDividers);
 		aggregateList.addAll(other.verticalDividers);
@@ -152,13 +133,13 @@ public class LayoutImpl<T> implements Layout {
 				localDivider.leadingJoin = local;
 			}
 		}
-		
+
 		//Copy the PathIterator
-		this.pathIterator = new PathIterator<>(this, other.pathIterator);
+		//this.pathIterator = new PathIterator<>(this, other.pathIterator);
 	}
 	
 	List<Node<T>> getNodes(List<String> ids) {
-		Set<Node<T>> nodes = new HashSet<>();
+		Set<Node<T>> nodes = new HashSet<>(ids.size());
 		for(String id : ids) {
 			nodes.add(getNode(id));
 		}
@@ -184,12 +165,12 @@ public class LayoutImpl<T> implements Layout {
 		return root;
 	}
 	
-	/**
-	 * Called from the engine remove logic to set the root node if
-	 * the previous root node has been removed.
-	 * 
-	 * @param n 	the new root
-	 */
+//	/**
+//	 * Called from the engine remove logic to set the root node if
+//	 * the previous root node has been removed.
+//	 *
+//	 * @param n 	the new root
+//	 */
 	void setRoot(Node<T> n) {
 		this.root = n;
 	}
@@ -235,9 +216,6 @@ public class LayoutImpl<T> implements Layout {
 	 * @return		this {@code Layout}'s {@link PathIterator}.
 	 */
 	PathIterator<T> getPathIterator() {
-		if(pathIterator == null) {
-			pathIterator = new PathIterator<>();
-		}
 		return pathIterator;
 	}
 	
@@ -245,12 +223,10 @@ public class LayoutImpl<T> implements Layout {
 	 * Returns a flag indicating whether this Layout is relative or not.
 	 */
 	@Override
-	@JsonIgnore
 	public boolean isRelative() {
 		return this.isRelative;
 	}
 	
-	@JsonIgnore
 	void setRelative(boolean b) {
 		this.isRelative = b;
 	}
@@ -582,7 +558,6 @@ public class LayoutImpl<T> implements Layout {
 		horizontalDividers.clear();
 		verticalDividers.clear();
 		pathIterator.clearAll();
-		pathIterator = null;
 	}
 	
 	/**

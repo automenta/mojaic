@@ -10,7 +10,7 @@ import java.awt.geom.Rectangle2D;
  * @author David Ray
  *
  */
-class Node<T> extends Element<T> {
+public class Node<T> extends Element<T> {
     protected double percentX;
     protected double percentY;
     protected double percentWidth;
@@ -35,7 +35,7 @@ class Node<T> extends Element<T> {
      * @param percentWidth		the percentage of the overall width used to size this node horizontally.
      * @param percentHeight		the percentage of the overall height used to size this node vertically. 
      */
-	Node(T t, double percentX, double percentY, double percentWidth, double percentHeight) {
+	public Node(T t, double percentX, double percentY, double percentWidth, double percentHeight) {
 		this(t, null, percentX, percentY, percentWidth, percentHeight);
 	}
 	
@@ -48,7 +48,7 @@ class Node<T> extends Element<T> {
      * @param percentWidth		the percentage of the overall width used to size this node horizontally.
      * @param percentHeight		the percentage of the overall height used to size this node vertically. 
 	 */
-	Node(T t, String id, double percentX, double percentY, double percentWidth, double percentHeight) {
+	public Node(T t, String id, double percentX, double percentY, double percentWidth, double percentHeight) {
 		super(t, id);
 		this.type = ElementType.NODE;
 	    

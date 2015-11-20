@@ -10,8 +10,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import ai.cogmission.mosaic.refimpl.pivot.MosaicPaneRefImpl;
-
 public class SimpleTester {
 	
 	
@@ -63,7 +61,7 @@ public class SimpleTester {
 	
 	public static void main(String[] args) {
 		try {
-		    URL url = MosaicPaneRefImpl.class.getResource("testModel.txt");
+		    URL url = new URL("file:///tmp/testModel.txt");
             String path = Paths.get(url.toExternalForm()).toAbsolutePath().toString();
             try{
                 path = Paths.get(url.toURI()).toAbsolutePath().toString();

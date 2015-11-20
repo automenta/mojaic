@@ -2,14 +2,7 @@ package ai.cogmission.mosaic;
 
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
 /**
@@ -54,7 +47,7 @@ class MosaicEngineImpl<T> implements MosaicEngine<T> {
      * Used as a return value while connecting up the layout
      */
     private enum ConnectType {
-        BOTH, TOP, BOTTOM, LEFT, RIGHT, NONE;
+        BOTH, TOP, BOTTOM, LEFT, RIGHT, NONE
     }
 
     /**
@@ -63,8 +56,6 @@ class MosaicEngineImpl<T> implements MosaicEngine<T> {
     private enum Corner {
         NW, SW, NE, SE
     }
-
-    ;
 
     static final int FACTOR = 10;
     static final int PRECISION = 2;
@@ -926,7 +917,8 @@ class MosaicEngineImpl<T> implements MosaicEngine<T> {
         if (surface.getIsDragging() || surface.isLocked()) return;
 
         if (surface.getNodeList().size() < 1) {
-            throw new IllegalStateException("Cannot layout an empty surface.");
+            //throw new IllegalStateException("Cannot layout an empty surface.");
+            return;
         }
 
         long start = System.nanoTime();
@@ -1340,10 +1332,16 @@ class MosaicEngineImpl<T> implements MosaicEngine<T> {
 
         surface.setHasValidDrop(false);
 
-        for (Node<T> n : surface.getNodeList()) {
-            n.r.setFrame(interimLayout.getNode(n.stringID).r);
-            n.force(surface, ChangeType.RESIZE_RELOCATE);
-        }
+        surface.getNodeList().forEach(n -> {
+            Node<T> node = interimLayout.getNode(n.stringID);
+            if (node!=null) {
+                n.r.setFrame(node.r);
+                n.force(surface, ChangeType.RESIZE_RELOCATE);
+            }
+            else {
+
+            }
+        });
     }
 
     @SuppressWarnings("unchecked")

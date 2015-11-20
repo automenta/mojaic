@@ -1,7 +1,5 @@
 package ai.cogmission.mosaic;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.awt.geom.Rectangle2D;
 import java.util.*;
 
@@ -32,13 +30,15 @@ class Divider<T> extends Element<T> {
 	
 	double length;
 	
-	Divider() { 
+	Divider(int i) {
 		super();
 		this.type = ElementType.DIVIDER;
+		this.id = i;
 		
 		createComparators();
 	}
-	
+
+
 	Divider(Divider<T> other) {
 		super(other);
 		
@@ -333,7 +333,7 @@ class Divider<T> extends Element<T> {
 	 * 
 	 * @return  the minimum x value;
 	 */
-	@JsonIgnore
+
 	public double getMinX() {
 		if(!isVertical) return r.x;
 		
@@ -360,7 +360,7 @@ class Divider<T> extends Element<T> {
 	 * 
 	 * @return	the minimum Y value
 	 */
-	@JsonIgnore
+
 	public double getMinY() {
 		if(isVertical) return r.y;
 		
@@ -388,7 +388,7 @@ class Divider<T> extends Element<T> {
 	 * @param	surfaceArea		Rectangle surface bounds 
 	 * @return  the maximum x value;
 	 */
-	@JsonIgnore
+
 	double getMaxX(Rectangle2D.Double surfaceArea) {
 		if(!isVertical) return r.x;
 		
@@ -417,7 +417,7 @@ class Divider<T> extends Element<T> {
 	 * @param	surfaceArea		Rectangle surface bounds
 	 * @return
 	 */
-	@JsonIgnore
+
 	double getMaxY(Rectangle2D.Double surfaceArea) {
 		if(isVertical) return r.y;
 		

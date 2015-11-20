@@ -1,9 +1,9 @@
 package ai.cogmission.mosaic;
 
-import java.util.List;
-
 import ai.cogmission.mosaic.PathIterator.HorizontalPath;
 import ai.cogmission.mosaic.PathIterator.VerticalPath;
+
+import java.util.List;
 
 
 /**

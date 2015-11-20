@@ -100,6 +100,6 @@ public enum ChangeType {
 	/**
 	 * Cursor change for cursor grab of the SE corner of an object
 	 */
-	CURSOR_GRAB_CORNER_SE;
-	
+	CURSOR_GRAB_CORNER_SE
+
 }

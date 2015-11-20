@@ -224,7 +224,7 @@ public interface Surface<T> {
 	 * 		the model definitions previously set during the call to {@link #addAll(List)}
 	 * 		<em>-or-</em> not the same as the number of ids.
 	 */
-	Surface<T> addAll(List<T> tList, List<String> idList);
+	//Surface<T> addAll(List<T> tList, List<String> idList);
 	
 	/**
 	 * Adds a {@link LayoutImpl} object to this {@code Surface}. This Surface's
@@ -477,20 +477,6 @@ public interface Surface<T> {
 	 */
 	void mouseReleased();
 	
-	/**
-	 * Returns a serialized form of this {@code Surface} in
-	 * JSON format.
-	 * 
-	 * @return	this Surface in serialized form
-	 */
-	String serialize();
-	
-	/**
-	 * Returns a {@code Surface} implementation from a JSON String.
-	 * 
-	 * @param jsonSurface
-	 * @return	the deserialized {@code Surface}
-	 */
-	Surface<T> deSerialize(String jsonSurface);
+
 
 }

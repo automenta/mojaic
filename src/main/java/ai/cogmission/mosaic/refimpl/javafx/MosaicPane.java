@@ -1,23 +1,12 @@
 package ai.cogmission.mosaic.refimpl.javafx;
 
-import java.awt.geom.Rectangle2D;
-
-import ai.cogmission.mosaic.ChangeType;
-import ai.cogmission.mosaic.MosaicEngine;
-import ai.cogmission.mosaic.MosaicEngineBuilder;
-import ai.cogmission.mosaic.MosaicSurfaceBuilder;
-import ai.cogmission.mosaic.Surface;
-import ai.cogmission.mosaic.SurfaceListener;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
-import javafx.geometry.Bounds;
+import ai.cogmission.mosaic.*;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
-import javafx.scene.paint.Color;
+
+import java.awt.geom.Rectangle2D;
 
 /**
  * An implementation of a container object which is meant to be used
@@ -150,12 +139,12 @@ public class MosaicPane<T extends Node> extends Region {
                     break;
                 }
                 case MOVE_BEGIN: {
-                    DropShadow shadow = new DropShadow();
-                    shadow.setOffsetX(10);
-                    shadow.setOffsetY(10);
-                    shadow.setRadius(5);
-                    shadow.setColor(Color.GRAY);
-                    n.setEffect(shadow);
+//                    DropShadow shadow = new DropShadow();
+//                    shadow.setOffsetX(10);
+//                    shadow.setOffsetY(10);
+//                    shadow.setRadius(5);
+//                    shadow.setColor(Color.GRAY);
+//                    n.setEffect(shadow);
                     n.toFront();
                     n.setOpacity(.5);
                     break;

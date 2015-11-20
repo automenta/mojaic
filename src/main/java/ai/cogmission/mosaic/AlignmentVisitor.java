@@ -1,10 +1,10 @@
 package ai.cogmission.mosaic;
 
-import java.awt.geom.Rectangle2D;
-import java.util.List;
-
 import ai.cogmission.mosaic.PathIterator.HorizontalPath;
 import ai.cogmission.mosaic.PathIterator.VerticalPath;
+
+import java.awt.geom.Rectangle2D;
+import java.util.List;
 
 /**
  * Implementation of the PathVisitor and ElementVisitor interfaces which 

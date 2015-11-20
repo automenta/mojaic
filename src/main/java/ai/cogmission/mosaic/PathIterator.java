@@ -1,9 +1,8 @@
 package ai.cogmission.mosaic;
 
+import javax.swing.text.Position;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.text.Position;
 
 /**
  * Contains and creates {@link PathIterator.Path} objects. Accepts

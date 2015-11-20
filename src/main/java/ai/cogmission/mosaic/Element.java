@@ -3,17 +3,13 @@ package ai.cogmission.mosaic;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 /**
  * Base class for parts of a layout. Layout parts consist of {@link Node}s
  * and {@link Divider}s.
  * @param <T>
  */
 abstract class Element<T> implements ElementVisitable<T> {
-	@JsonProperty
+
     protected int id;
 	
     protected String stringID;
@@ -30,9 +26,7 @@ abstract class Element<T> implements ElementVisitable<T> {
     private final Point2D.Double surfaceOffset = new Point2D.Double();
     
     /** The rectangle modified during layout */
-    @JsonSerialize(using = DividerSerializer.class)
-	@JsonDeserialize(using = DividerDeserializer.class)
-	protected Rectangle2D.Double r;
+	protected final Rectangle2D.Double r;
 	/** The rectangle used to compare to see if anythings changed */
 	protected final Rectangle2D.Double copy;
 	/** The offsets of the object within it's container. */
@@ -126,7 +120,7 @@ abstract class Element<T> implements ElementVisitable<T> {
 	 * Used internally by the serialization infrastructure DO NOT CALL THIS! :)
 	 * @param id
 	 */
-	void setId(int id) { 
+	void setId(int id) {
 		this.id = id;
 		if(this.type == ElementType.DIVIDER) {
 			this.stringID = "" + id;

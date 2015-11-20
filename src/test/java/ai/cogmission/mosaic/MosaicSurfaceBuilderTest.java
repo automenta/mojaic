@@ -1,11 +1,9 @@
 package ai.cogmission.mosaic;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
 import org.junit.Test;
 
-import ai.cogmission.mosaic.MosaicSurfaceBuilder;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class MosaicSurfaceBuilderTest {
 
