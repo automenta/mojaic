@@ -79,7 +79,7 @@ public class LayoutImpl<T> implements Layout {
 	 * @param other {@link Layout} to copy
 	 */
 	public LayoutImpl(LayoutImpl<T> other) {
-		this(other.getRoot(), other.isRelative());
+		this(other.root, other.isRelative);
 
 		this.isRelative = other.isRelative;
 		this.objectIDs.putAll(other.objectIDs);
@@ -91,13 +91,17 @@ public class LayoutImpl<T> implements Layout {
 			Divider<T> thisDivider = new Divider<>(otherDivider);
 			for(Node<T> n : otherDivider.prevNodes) {
 				Node<T> local = getNode(n.stringID);
-				local.nextHorizontal = thisDivider;
-				thisDivider.addPrevious(local);
+				if (local!=null) {
+					local.nextHorizontal = thisDivider;
+					thisDivider.addPrevious(local);
+				}
 			}
 			for(Node<T> n : otherDivider.nextNodes) {
 				Node<T> local = getNode(n.stringID);
-				local.prevHorizontal = thisDivider;
-				thisDivider.addNext(getNode(n.stringID));
+				if (local!=null) {
+					local.prevHorizontal = thisDivider;
+					thisDivider.addNext(getNode(n.stringID));
+				}
 			}
 			this.horizontalDividers.add(thisDivider);
 		}
@@ -185,7 +189,7 @@ public class LayoutImpl<T> implements Layout {
 	 * 				the id specified.
 	 */
 	Node<T> getNode(String id) {
-		for(Node<T> n : getNodeList()) {
+		for(Node<T> n : nodeList) {
 			if(n.stringID.equals(id)) {
 				return n;
 			}
@@ -203,7 +207,7 @@ public class LayoutImpl<T> implements Layout {
 	 * 						the id specified
 	 */
 	Divider<T> getDivider(String id, boolean isVertical) {
-		List<Divider<T>> searchList = isVertical ? getVerticalDividers() : getHorizontalDividers();
+		List<Divider<T>> searchList = isVertical ? verticalDividers : horizontalDividers;
 		for(Divider<T> d : searchList) {
 			if(d.stringID.equals(id)) return d;
 		}
@@ -358,12 +362,12 @@ public class LayoutImpl<T> implements Layout {
 		}
 		
 		if(checkIsAdded(id)) {
-			throw new IllegalArgumentException("Cannot add a specification with the same id twice [" + id + "]");
+			throw new IllegalArgumentException("Cannot add a specification with the same id twice [" + id + ']');
 		}
 		
-		cells.add(new StringBuilder(id).append(",").append(x).append(",").append(y).append(",").append(width).
-			append(",").append(height).append(",").append(minW).append(",").append(maxW).append(",").append(minH).
-			append(",").append(maxH).toString());
+		cells.add(new StringBuilder(id).append(',').append(x).append(',').append(y).append(',').append(width).
+			append(',').append(height).append(',').append(minW).append(',').append(maxW).append(',').append(minH).
+			append(',').append(maxH).toString());
 		
 		return this;
 	}
@@ -384,12 +388,12 @@ public class LayoutImpl<T> implements Layout {
 		}
 		
 		if(checkIsAdded(id)) {
-			throw new IllegalArgumentException("Cannot add a specification with the same id twice [" + id + "]");
+			throw new IllegalArgumentException("Cannot add a specification with the same id twice [" + id + ']');
 		}
 		
-		cells.add(new StringBuilder(id).append(",").append(x).append(",").append(y).append(",").append(width).
-			append(",").append(height).append(",").append(minW).append(",").append(maxW).append(",").append(minH).
-			append(",").append(maxH).append(",").append(hWeight).append(",").append(vWeight).toString());
+		cells.add(new StringBuilder(id).append(',').append(x).append(',').append(y).append(',').append(width).
+			append(',').append(height).append(',').append(minW).append(',').append(maxW).append(',').append(minH).
+			append(',').append(maxH).append(',').append(hWeight).append(',').append(vWeight).toString());
 		
 		return this;
 	}
@@ -434,9 +438,9 @@ public class LayoutImpl<T> implements Layout {
 	void addDivider(String id, boolean isVertical, double x, double y, double width , double height,
 		String prevNodes, String nextNodes, String leadingJoins, String trailingJoins) {
 		
-		String dividerStr = new StringBuilder(id).append(",").append(x).append(",").append(y).append(",").append(width).
-			append(",").append(height).append(",").append(prevNodes).append(",").append(nextNodes).append(",").
-				append(leadingJoins).append(",").append(trailingJoins).toString();
+		String dividerStr = new StringBuilder(id).append(',').append(x).append(',').append(y).append(',').append(width).
+			append(',').append(height).append(',').append(prevNodes).append(',').append(nextNodes).append(',').
+				append(leadingJoins).append(',').append(trailingJoins).toString();
 		if(isVertical) {
 			vDividers.add(dividerStr);
 		}else{
@@ -478,6 +482,7 @@ public class LayoutImpl<T> implements Layout {
 	 * @param id	the id correlated to the returned specification string.
 	 * @return		the comma-separated string representing the correlated layout.
 	 */
+	@Override
 	public String getCell(String id) {
 		return getCellWithMatchingParameter(ID, id);
 	}
@@ -540,7 +545,7 @@ public class LayoutImpl<T> implements Layout {
 	 * @param layoutConstant		the index in {@link LayoutConstants} of interest.
 	 * @return	a particular value.
 	 */
-	String parse(String cellStr, int layoutConstant) {
+	static String parse(String cellStr, int layoutConstant) {
 		return cellStr.split(LayoutConstants.CELL_PTRN)[layoutConstant];
 	}
 	

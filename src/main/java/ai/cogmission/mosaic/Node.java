@@ -316,6 +316,7 @@ public class Node<T> extends Element<T> {
 	 * @param changeType	{@link ChangeType} adds additional information
 	 * 						for client.
 	 */
+	@Override
 	void set(SurfacePriviledged<T> surface, ChangeType changeType) {
 		r.setFrame(r.x, r.y, Math.max(0, r.width), Math.max(0, r.height));
 	    if(!r.equals(copy)) {
@@ -333,6 +334,7 @@ public class Node<T> extends Element<T> {
 	 * @param changeType	{@link ChangeType} adds additional information
 	 * 						for client.
 	 */
+	@Override
 	void force(SurfacePriviledged<T> surface, ChangeType changeType) {
 		setOffset(surface);
     	surface.notifyChange(changeType, t, stringID, 

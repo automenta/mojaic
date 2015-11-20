@@ -123,6 +123,9 @@ class AlignmentVisitor<T> implements PathVisitor<T>, ElementVisitor<T> {
 		double leftOverWidth = surface.getArea().getWidth();
         List<?> l = hp.getElements();
         int len = l.size();
+
+		if (len == 0) return;
+
         Element<T> e = null;
         for(int i = 0;i < len;i++) {
         	e = (Element<T>)l.get(i);
@@ -131,6 +134,10 @@ class AlignmentVisitor<T> implements PathVisitor<T>, ElementVisitor<T> {
             
             leftOverWidth -= e.r.width;
         }
+
+		if (e == null)
+			return;
+
         //Add back in any fractions left over due to 
         //non-integer resolution - can't set the weights
         //until after this adjustment for perfect layout.

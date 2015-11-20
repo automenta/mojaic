@@ -77,7 +77,7 @@ abstract class Element<T> implements ElementVisitable<T> {
 	Element(T t, String id) {
 		this.t = t;
 		this.id = nodeCounter++; //REPLACE WITH MORE FORMAL GUUID MECHANISM OR SOMETHING
-		this.stringID = id == null ? "" + this.id : id;
+		this.stringID = id == null ? String.valueOf(this.id) : id;
 		r = new Rectangle2D.Double();
 		copy = new Rectangle2D.Double();
 		wo = new Rectangle2D.Double();
@@ -102,7 +102,7 @@ abstract class Element<T> implements ElementVisitable<T> {
         }
         sb.append(", hWeight: ").append(horizontalWeight).append(", ").
         append("vWeight: ").append(verticalWeight);
-        sb.append("]");
+        sb.append(']');
         
         if(useSurfaceOffset) {
             sb.append(" \t offset [").append("x: ").append(wo.x).append(", ").
@@ -112,7 +112,7 @@ abstract class Element<T> implements ElementVisitable<T> {
         }
         sb.append(" surface offset [x: ").append(surfaceOffset.x).
         append(", y: ").append(surfaceOffset.y).
-        append("]");
+        append(']');
         return sb.toString();
     }
 	
@@ -123,7 +123,7 @@ abstract class Element<T> implements ElementVisitable<T> {
 	void setId(int id) {
 		this.id = id;
 		if(this.type == ElementType.DIVIDER) {
-			this.stringID = "" + id;
+			this.stringID = String.valueOf(id);
 		}
 	}
 	

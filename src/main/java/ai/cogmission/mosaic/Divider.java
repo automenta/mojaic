@@ -178,7 +178,7 @@ class Divider<T> extends Element<T> {
 		if(nextNodes.isEmpty()) return EMPTY;
 		StringBuilder sb = new StringBuilder();
 		for(Node<T> n : nextNodes) {
-			sb.append(n.stringID).append(":");
+			sb.append(n.stringID).append(':');
 		}
 		sb.setLength(sb.length() - 1);
 		return sb.toString();
@@ -192,7 +192,7 @@ class Divider<T> extends Element<T> {
 		if(prevNodes.isEmpty()) return EMPTY;
 		StringBuilder sb = new StringBuilder();
 		for(Node<T> n : prevNodes) {
-			sb.append(n.stringID).append(":");
+			sb.append(n.stringID).append(':');
 		}
 		sb.setLength(sb.length() - 1);
 		return sb.toString();
@@ -206,7 +206,7 @@ class Divider<T> extends Element<T> {
 		if(leadingJoins.isEmpty()) return EMPTY;
 		StringBuilder sb = new StringBuilder();
 		for(Divider<T> n : leadingJoins) {
-			sb.append(n.stringID).append(":");
+			sb.append(n.stringID).append(':');
 		}
 		sb.setLength(sb.length() - 1);
 		return sb.toString();
@@ -220,7 +220,7 @@ class Divider<T> extends Element<T> {
 		if(trailingJoins.isEmpty()) return EMPTY;
 		StringBuilder sb = new StringBuilder();
 		for(Divider<T> n : trailingJoins) {
-			sb.append(n.stringID).append(":");
+			sb.append(n.stringID).append(':');
 		}
 		sb.setLength(sb.length() - 1);
 		return sb.toString();
@@ -523,8 +523,10 @@ class Divider<T> extends Element<T> {
 	}
 	
 	/** NOP */
+	@Override
 	void set(SurfacePriviledged<T> s, ChangeType c) {}
 	
 	/** NOP */
+	@Override
 	void force(SurfacePriviledged<T> s, ChangeType c) {}
 }

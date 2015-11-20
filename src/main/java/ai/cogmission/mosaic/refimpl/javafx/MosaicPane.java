@@ -50,10 +50,14 @@ public class MosaicPane<T extends Node> extends Region {
 				.cornerClickRadius(5)
 				.useSurfaceOffset(false)
 				.dividerSize(10)
-				.snapDistance(15).build();
+				.snapDistance(15).
+							build();
 			
 			this.surface.addChangeListener(getSurfaceObserver());
-			
+
+			//setManaged(false);
+			//setCenterShape(false);
+
 			content = new Group();
 	        content.setManaged(false);
 	        getChildren().add(content);
@@ -119,7 +123,7 @@ public class MosaicPane<T extends Node> extends Region {
 	}
 	
 	public SurfaceListener<T> getSurfaceObserver() {
-		SurfaceListener<T> l = (changeType, n, id, r1, r2) -> {
+		return (changeType, n, id, r1, r2) -> {
             switch(changeType) {
                 case REMOVE_DISCARD: {
                     content.getChildren().remove(n);
@@ -139,6 +143,7 @@ public class MosaicPane<T extends Node> extends Region {
                     break;
                 }
                 case MOVE_BEGIN: {
+					//TODO factor this out to a shared static
 //                    DropShadow shadow = new DropShadow();
 //                    shadow.setOffsetX(10);
 //                    shadow.setOffsetY(10);
@@ -172,6 +177,5 @@ public class MosaicPane<T extends Node> extends Region {
                 default: break;
             }
         };
-		return l;
 	}
 }

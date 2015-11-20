@@ -63,8 +63,13 @@ public class MosaicPaneRefImpl extends Application {
 		}
 		
         mosaicPane.getEngine().addSurface(mosaicPane.getSurface());
-        
-        Scene scene = new Scene(mosaicPane, 600, 400);
+
+
+		mosaicPane.setMaxWidth(Double.MAX_VALUE);
+		mosaicPane.setMaxHeight(Double.MAX_VALUE);
+
+        Scene scene = new Scene(mosaicPane, 900, 700);
+
 	    stage.setTitle("Mosaic Layout Engine Demo (JavaFX)");
 		stage.setScene(scene);
 		stage.show();

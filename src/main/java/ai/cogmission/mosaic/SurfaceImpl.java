@@ -95,10 +95,11 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	 */
 	@SuppressWarnings("serial")
     private class ChangeListenerList extends ArrayList<SurfaceListener<T>> implements SurfaceListener<T> {
-	    public void changed(ChangeType changeType, T t, String id, Rectangle2D oldRectangle , Rectangle2D newRectangle) {
+	    @Override
+		public void changed(ChangeType changeType, T t, String id, Rectangle2D oldRectangle , Rectangle2D newRectangle) {
 	    	/* Enabled flag */
 			boolean isEnabled = true;
-			if(!isEnabled) return;
+			//if(!isEnabled) return;
 	    	
 	        for(SurfaceListener<T> listener : this) {
 	            listener.changed(changeType, t, id, oldRectangle, newRectangle);
@@ -118,6 +119,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	 * 
 	 * @return	the root {@link Node}
 	 */
+	@Override
 	Node<T> getRoot() {
 		return layout.getRoot();
 	}
@@ -128,6 +130,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	 *
 	 * @param n 	the new root
 	 */
+	@Override
 	void setRoot(Node<T> n) {
 		layout.setRoot(n);
 	}
@@ -137,6 +140,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	 * 
 	 * @return	this {@code Surface}'s {@link PathIterator}.
 	 */
+	@Override
 	PathIterator<T> getPathIterator() {
 		return layout.getPathIterator();
 	}
@@ -147,6 +151,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	 * 
 	 * @param isRelative	whether this Layout's current spec is relative or not.
 	 */
+	@Override
 	public void updateLayoutSerializables(boolean isRelative) { //RETURN TO PRIVATE AFTER TESTING!
 		layout.setRelative(isRelative);
 		layout.clearSerializableDefinitions();
@@ -159,12 +164,12 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 		}
 		
 		for(Divider<T> div : getVerticalDividers()) {
-			layout.replaceOrAddDivider("" + div.stringID, true, div.r.x, div.r.y, div.r.width, div.r.height, 
+			layout.replaceOrAddDivider(div.stringID, true, div.r.x, div.r.y, div.r.width, div.r.height,
 				div.prevNodesSerial(), div.nextNodesSerial(), div.leadingJoinsSerial(), div.trailingJoinsSerial());
 		}
 		
 		for(Divider<T> div : getHorizontalDividers()) {
-			layout.replaceOrAddDivider("" + div.stringID, false, div.r.x, div.r.y, div.r.width, div.r.height, 
+			layout.replaceOrAddDivider(div.stringID, false, div.r.x, div.r.y, div.r.width, div.r.height,
 				div.prevNodesSerial(), div.nextNodesSerial(), div.leadingJoinsSerial(), div.trailingJoinsSerial());
 		}
 	}
@@ -173,14 +178,17 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	 * Creates a copy that can be used for partial or total recreation
 	 * of a layout as it exists at the time of this method being called.
 	 */
+	@Override
 	void snapshotLayout() {
 		this.layoutCopy = new LayoutImpl<>(layout);
 	}
 	
+	@Override
 	LayoutImpl<T> getSnapshot() {
 		return this.layoutCopy;
 	}
 	
+	@Override
 	void revertLayout() {
 		this.layout.clearAll();
 		this.layout = new LayoutImpl<>(layoutCopy);
@@ -255,6 +263,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	 * @param id	the String id of the retrieved {@link Node}
 	 * @return	the {@link Node} specified by "id".
 	 */
+	@Override
 	Node<T> getNode(String id) {
 		return layout.getNode(id);
 	}
@@ -277,7 +286,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	 * 
 	 * @return
 	 */
-	double getToleranceRatio() {
+	static double getToleranceRatio() {
 		return MosaicEngineImpl.DIVIDER_TOLERANCE_RATIO;
 	}
 	
@@ -300,6 +309,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	 * interface message.
 	 * @param t		the <T> to remove.
 	 */
+	@Override
 	public void requestRemove(T t) {
 		requestRemove(layout.get(t));
 	}
@@ -307,6 +317,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	/**
 	 * Removes the Object identified by the specified id from this Surface's {@link Layout}.
 	 */
+	@Override
 	public void requestRemove(String id) {
 		Node<T> node = layout.getNode(id);
 		if(node == null) {
@@ -383,10 +394,12 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 		this.hasValidDrop = b;
 	}
 	
+	@Override
 	void snapshotInterimLayout() {
 		this.interimLayoutSnapshot = new LayoutImpl<>(layout);
 	}
 	
+	@Override
 	LayoutImpl<T> getInterimSnapshot() {
 		return interimLayoutSnapshot;
 	}
@@ -464,8 +477,9 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	 * @see #requestMoveReject(Object)
 	 * @see #requestMoveCancel()
 	 */
+	@Override
 	public void requestMoveBegin(T source) {
-		if(isLocked()) return;
+		if(locked) return;
 		setLocked(true);
 		
 		engine.beginDropElement(this, layout.getNode(layout.get(source)));
@@ -491,7 +505,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	 */
 	@Override
 	public void requestMoveTest(T source, T target, Position p) {
-		if(! isLocked()) return;
+		if(!locked) return;
 		
 		engine.testDropElement(this, interimLayoutSnapshot, 
 			layoutCopy.getNode(layoutCopy.get(source)), layout.getNode(layout.get(target)), p);
@@ -619,7 +633,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 			}
 
 			String[] spec = cell.split(LayoutConstants.CELL_PTRN);
-			Node<T> node = null;
+			Node<T> node;
 			if(spec.length > LayoutConstants.MAX_H) {
 				node = new Node<>(layout.get(id), id,
 						Double.parseDouble(spec[LayoutConstants.X]),
@@ -799,13 +813,13 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 			}
 		}
 		
-		if(missingIds.size() > 0) {
-			//throw new IllegalStateException("No layout spec found for ids: " + missingIds);
-		}
+//		if(missingIds.size() > 0) {
+//			//throw new IllegalStateException("No layout spec found for ids: " + missingIds);
+//		}
 		
 		//Check layout's with no objects/ID's to match		
 		for(String cell : layout.getCells()) {
-			String id = layout.parse(cell, LayoutConstants.ID);
+			String id = LayoutImpl.parse(cell, LayoutConstants.ID);
 			if(layout.get(id) == null) {
 				missingIds.add(id);
 			}
@@ -974,6 +988,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	 * Called by the engine to remove Node references and linked infrastructure.
 	 * @param node	the node being removed.
 	 */
+	@Override
 	void removeNodeReferences(Node<T> node) {
 		layout.remove(node.stringID);
 		node.disconnectFromDividers();
@@ -984,6 +999,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	 * @param d		the Divider acting as key
 	 * @param l		the list of Divider search results.
 	 */
+	@Override
 	void storeSearchResults(Divider<T> d, List<Divider<T>> l) {
 		tempOverlapSearchMap.put(d, l);
 	}
@@ -994,6 +1010,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	 * @param key	the Divider acting as key
 	 * @return		the list of Divider search results.
 	 */
+	@Override
 	List<Divider<T>> getSearchResults(Divider<T> key) {
 		return tempOverlapSearchMap.get(key);
 	}
@@ -1001,6 +1018,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	/**
 	 * Clears the previous cylce's search results.
 	 */
+	@Override
 	void clearSearchResults() {
 		tempOverlapSearchMap.clear();
 	}
@@ -1026,6 +1044,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	 * @return	the current {@link Layout} currently set on this {@code Surface}
 	 */
 	
+	@Override
 	public LayoutImpl<T> getLayout() {
 		return this.layout;
 	}
@@ -1056,6 +1075,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	 * @param previous		the previous rectangle describing the object's bounds.
 	 * @param current		the current rectangle describing the object's new bounds.
 	 */
+	@Override
 	public void notifyChange(ChangeType changeType, T t, String id, Rectangle2D.Double previous, Rectangle2D.Double current) {
 		listeners.changed(changeType, t, id, previous, current);
 	}
@@ -1084,6 +1104,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	 * 
 	 * @return	the canonical list of {@link Node}s.
 	 */
+	@Override
 	List<Node<T>> getNodeList() {
 		return layout.getNodeList();
 	}
@@ -1095,6 +1116,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	 * 
 	 * @return	the configured boundary divider condition.
 	 */
+	@Override
 	Point2D.Double getBoundaryDividerCondition() {
 		return boundaryDividerCondition;
 	}
@@ -1104,6 +1126,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	 * 
 	 * @return	the list of horizontal {@link Divider}s.
 	 */
+	@Override
 	List<Divider<T>> getHorizontalDividers() {
 		return layout.getHorizontalDividers();
 	}
@@ -1113,6 +1136,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	 * 
 	 * @return	the list of vertical {@link Divider}s.
 	 */
+	@Override
 	List<Divider<T>> getVerticalDividers() {
 		return layout.getVerticalDividers();
 	}
@@ -1122,6 +1146,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	 * 
 	 * @param b	true if is first layout run or before, false if not
 	 */
+	@Override
 	void setIsInit(boolean b) {
 		this.isInit = b;
 	}
@@ -1151,6 +1176,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	 * 	
 	 * @param b	the flag indicating whether a drag operation is occurring.
 	 */
+	@Override
 	boolean getIsDragging() {
 		return this.isDragging;
 	}
@@ -1279,6 +1305,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	}
 	
 	
+	@Override
 	public void cursorLeft() {//37
 		if(nodeCursor == null) {
 			nodeCursor = getRoot().stringID;
@@ -1289,6 +1316,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 			nodeCursor = currNode.prevVertical.previousNodes().get(0).stringID;
 		}
 	}
+	@Override
 	public void cursorUp() {//38
 		if(nodeCursor == null) {
 			nodeCursor = getRoot().stringID;
@@ -1298,6 +1326,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 			nodeCursor = currNode.prevHorizontal.previousNodes().get(0).stringID;
 		}
 	}
+	@Override
 	public void cursorRight() {//39
 		if(nodeCursor == null) {
 			nodeCursor = getRoot().stringID;
@@ -1307,6 +1336,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 			nodeCursor = currNode.nextVertical.nextNodes().get(0).stringID;
 		}
 	}
+	@Override
 	public void cursorDown() {//40
 		if(nodeCursor == null) {
 			nodeCursor = getRoot().stringID;
@@ -1318,6 +1348,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	}
 	
 	
+	@Override
 	public String getCursor() {
 		if(nodeCursor == null) {
 			nodeCursor = getRoot().stringID;
@@ -1326,6 +1357,7 @@ public class SurfaceImpl<T> extends SurfacePriviledged<T> {
 	}
 	
 	
+	@Override
 	public void setCursor(String id) {
 		this.nodeCursor = id;
 	}

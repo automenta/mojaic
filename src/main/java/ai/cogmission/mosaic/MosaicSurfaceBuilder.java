@@ -127,23 +127,21 @@ public class MosaicSurfaceBuilder<T> implements SurfaceBuilder<T> {
 		if(useSurfaceOffset != null && useSurfaceOffset && surfaceOffset != null) {
 			surface.setUseSurfaceOffset(useSurfaceOffset.booleanValue());
 			surface.setSurfaceOffset(surfaceOffset);
-		}else if(useSurfaceOffset != null && useSurfaceOffset && surfaceOffset == null) {
+		}else if(useSurfaceOffset != null && useSurfaceOffset) {
 			throw new IllegalStateException("There must be a surface offset to use if useSurfaceOffset is set to \"true\"");
-		}else if(surfaceOffset != null && useSurfaceOffset != null && useSurfaceOffset) {
-			System.err.println("Warning surfaceOffset was set but the flag useSurfaceOffset was never set to true so it will remain unused");
 		}
-		
+
 		return surface;
 	}
 
-	class NodeShell {
+	static class NodeShell {
 		
 		public NodeShell connectTo(String dividerNum) {
 			return this;
 		}
 	}
 	
-	class DividerShell {
+	static class DividerShell {
 		
 	}
 	

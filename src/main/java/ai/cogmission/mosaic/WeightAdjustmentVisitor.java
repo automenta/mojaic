@@ -31,7 +31,7 @@ class WeightAdjustmentVisitor<T> implements PathVisitor<T> {
 		double netWidth = surface.getArea().width;// - (hp.getDividerCount() * surface.getDividerSize());
 		List<?> l = hp.getElements();
         int len = l.size();
-        Element e = null;
+        Element e;
         for(int i = 0;i < len;i++) {
         	e = (Element<T>)l.get(i);
         	if(e.type == ElementType.DIVIDER) continue;
@@ -45,7 +45,7 @@ class WeightAdjustmentVisitor<T> implements PathVisitor<T> {
 		double netHeight = surface.getArea().height;// - (vp.getDividerCount() * surface.getDividerSize());
 		List<?> l = vp.getElements();
         int len = l.size();
-        Element<T> e = null;
+        Element<T> e;
         for(int i = 0;i < len;i++) {
         	e = (Element<T>)l.get(i);
         	if(e.type == ElementType.DIVIDER) continue;

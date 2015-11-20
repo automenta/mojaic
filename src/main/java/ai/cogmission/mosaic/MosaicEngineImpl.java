@@ -119,6 +119,7 @@ class MosaicEngineImpl<T> implements MosaicEngine<T> {
      *
      * @param surface the {@code Surface} to remove.
      */
+    @Override
     public void removeSurface(Surface<T> surface) {
         SurfacePriviledged<T> s = (SurfacePriviledged<T>) surface;
         s.setEngine(null);
@@ -164,7 +165,7 @@ class MosaicEngineImpl<T> implements MosaicEngine<T> {
      *                       from the origin.
      * @return return a new combined Rectangle2D.Double
      */
-    private Rectangle2D.Double addPerpendicularBounds(Rectangle2D.Double orig, Rectangle2D.Double alt, boolean origIsVertical) {
+    private static Rectangle2D.Double addPerpendicularBounds(Rectangle2D.Double orig, Rectangle2D.Double alt, boolean origIsVertical) {
         Rectangle2D.Double retVal = new Rectangle2D.Double();
         if (!origIsVertical) {
             retVal.setFrame(orig.x, alt.y, orig.width, alt.height);
@@ -192,8 +193,8 @@ class MosaicEngineImpl<T> implements MosaicEngine<T> {
      * @see #getMaxMoveBounds(Divider)
      * @see #addPerpendicularBounds(java.awt.geom.Rectangle2D.Double, java.awt.geom.Rectangle2D.Double, boolean)
      */
-    private Point2D.Double moveDragPoint(Point2D.Double p, Rectangle2D.Double maxMoveBounds,
-                                         double mouseX, double mouseY, double xOffset, double yOffset) {
+    private static Point2D.Double moveDragPoint(Point2D.Double p, Rectangle2D.Double maxMoveBounds,
+                                                double mouseX, double mouseY, double xOffset, double yOffset) {
 
         Point2D.Double nextPoint = new Point2D.Double(p.x, p.y);
         nextPoint.x = Math.max(maxMoveBounds.x, Math.min(maxMoveBounds.getMaxX(), mouseX - xOffset));
@@ -578,7 +579,7 @@ class MosaicEngineImpl<T> implements MosaicEngine<T> {
 
         double reductionAmt = Math.rint((node.r.height / 2d) + dividerAllowance / (double) (moveList.size() + 1));
         for (Divider<T> d : moveList) {
-            moveDivider(surface, affectedNodes, d, null, new Point2D.Double(0, d.r.y + reductionAmt), surface.getDividerSize());
+            moveDivider(affectedNodes, d, null, new Point2D.Double(0, d.r.y + reductionAmt), surface.getDividerSize());
         }
 
         prevSearchResults = surface.getSearchResults(node.nextHorizontal);
@@ -590,7 +591,7 @@ class MosaicEngineImpl<T> implements MosaicEngine<T> {
 
         reductionAmt = Math.rint((node.r.height / 2d) + dividerAllowance / (double) (moveList.size() + 1));
         for (Divider<T> d : moveList) {
-            moveDivider(surface, affectedNodes, d, null, new Point2D.Double(0, d.r.y - reductionAmt), surface.getDividerSize());
+            moveDivider(affectedNodes, d, null, new Point2D.Double(0, d.r.y - reductionAmt), surface.getDividerSize());
         }
 
         affectedNodes.addAll(mergeDividers(surface, node.prevHorizontal, node.nextHorizontal, mergeLoc));
@@ -623,7 +624,7 @@ class MosaicEngineImpl<T> implements MosaicEngine<T> {
 
         double reductionAmt = Math.rint((node.r.width / 2d) + dividerAllowance / (double) (moveList.size() + 1));
         for (Divider<T> d : moveList) {
-            moveDivider(surface, affectedNodes, d, null, new Point2D.Double(d.r.x + reductionAmt, 0), surface.getDividerSize());
+            moveDivider(affectedNodes, d, null, new Point2D.Double(d.r.x + reductionAmt, 0), surface.getDividerSize());
         }
 
 
@@ -636,7 +637,7 @@ class MosaicEngineImpl<T> implements MosaicEngine<T> {
 
         reductionAmt = Math.rint((node.r.width / 2d) + dividerAllowance / (double) (moveList.size() + 1));
         for (Divider<T> d : moveList) {
-            moveDivider(surface, affectedNodes, d, null, new Point2D.Double(d.r.x - reductionAmt, 0), surface.getDividerSize());
+            moveDivider(affectedNodes, d, null, new Point2D.Double(d.r.x - reductionAmt, 0), surface.getDividerSize());
         }
 
         affectedNodes.addAll(mergeDividers(surface, node.prevVertical, node.nextVertical, mergeLoc));
@@ -667,7 +668,7 @@ class MosaicEngineImpl<T> implements MosaicEngine<T> {
             if ((!target.isVertical && mergeLoc != target.r.y && mergeLoc != source.r.y) ||
                     (target.isVertical && mergeLoc != target.r.x && mergeLoc != source.r.x)) {
 
-                moveDivider(surface, affectedNodes, target, null,
+                moveDivider(affectedNodes, target, null,
                         new Point2D.Double(mergeLoc, mergeLoc), surface.getDividerSize());
             }
         }
@@ -802,7 +803,7 @@ class MosaicEngineImpl<T> implements MosaicEngine<T> {
      *                      dividers, and the y value for horizontal dividers).
      * @param dividerSize   the size of the static dimension of {@link Divider}s on its {@link Surface}
      */
-    private List<Node<T>> moveDivider(SurfacePriviledged<T> s, List<Node<T>> affectedNodes, Divider<T> d, Divider<T> alt, Point2D.Double movePoint, double dividerSize) {
+    private List<Node<T>> moveDivider(List<Node<T>> affectedNodes, Divider<T> d, Divider<T> alt, Point2D.Double movePoint, double dividerSize) {
         if (d.isVertical) {
             double deltaX = movePoint.x - d.r.x;
             d.r.x += deltaX;
@@ -825,7 +826,7 @@ class MosaicEngineImpl<T> implements MosaicEngine<T> {
                 joined.r.width -= deltaX;
             }
             if (alt != null) {
-                moveDivider(s, affectedNodes, alt, null, movePoint, dividerSize);
+                moveDivider(affectedNodes, alt, null, movePoint, dividerSize);
             }
         } else {
             double deltaY = movePoint.y - d.r.y;
@@ -849,7 +850,7 @@ class MosaicEngineImpl<T> implements MosaicEngine<T> {
                 joined.r.height -= deltaY;
             }
             if (alt != null) {
-                moveDivider(s, affectedNodes, alt, null, movePoint, dividerSize);
+                moveDivider(affectedNodes, alt, null, movePoint, dividerSize);
             }
         }
 
@@ -976,7 +977,7 @@ class MosaicEngineImpl<T> implements MosaicEngine<T> {
 
             ConnectType type = connectAdjacentHorizontalDividers(surface, n);
             if (type != ConnectType.BOTH) {
-                Divider<T> div = null;
+                Divider<T> div;
 
                 if (ny > boundaryY && type != ConnectType.TOP) {
                     div = new Divider<>(nx, ny, nw, false);
@@ -997,7 +998,7 @@ class MosaicEngineImpl<T> implements MosaicEngine<T> {
 
             type = connectAdjacentVerticalDividers(surface, n);
             if (type != ConnectType.BOTH) {
-                Divider<T> div = null;
+                Divider<T> div;
                 if (nx > boundaryX && type != ConnectType.LEFT) {
                     div = new Divider<>(nx, ny, nh, true);
                     div.dividerSize = surface.getDividerSize();
@@ -1232,8 +1233,8 @@ class MosaicEngineImpl<T> implements MosaicEngine<T> {
         switch (p) {
             case NORTH: //Allow fall-through
             case SOUTH: {
-                double targetHeight = 0;
-                double sourceHeight = 0;
+                double targetHeight;
+                double sourceHeight;
                 double halfHeight = Math.rint((target.r.height - dividerSize) / 2d);
                 if (source.r.height > 0 && source.r.height <= halfHeight) {
                     targetHeight = target.r.height - (source.r.height + dividerSize);
@@ -1256,8 +1257,8 @@ class MosaicEngineImpl<T> implements MosaicEngine<T> {
             }
             case WEST: //Allow fall-through
             case EAST: {
-                double targetWidth = 0;
-                double sourceWidth = 0;
+                double targetWidth;
+                double sourceWidth;
                 double halfWidth = Math.rint((target.r.width - dividerSize) / 2d);
                 if (source.r.width > 0 && source.r.width <= halfWidth) {
                     targetWidth = target.r.width - (source.r.width + dividerSize);
@@ -1327,7 +1328,11 @@ class MosaicEngineImpl<T> implements MosaicEngine<T> {
         source.force(surface, ChangeType.RELOCATE_DRAG_TARGET);
         source.force(surface, ChangeType.RESIZE_DRAG_TARGET);
 
-        target.r.setFrame(interimLayout.getNode(target.stringID).r);
+        Node<T> targetNode = interimLayout.getNode(target.stringID);
+        if (targetNode == null)
+            return;
+
+        target.r.setFrame(targetNode.r);
         target.force(surface, ChangeType.ANIMATE_RESIZE_RELOCATE);
 
         surface.setHasValidDrop(false);
@@ -1361,9 +1366,10 @@ class MosaicEngineImpl<T> implements MosaicEngine<T> {
         source.force(surface, ChangeType.ANIMATE_RESIZE_RELOCATE);
         target.force(surface, ChangeType.ANIMATE_RESIZE_RELOCATE);
 
-        ((LayoutImpl<T>) surface.getLayout()).setRelative(false);
-        ((LayoutImpl<T>) surface.getLayout()).put(source.stringID, source.getTarget());
-        ((LayoutImpl<T>) surface.getLayout()).addCell(source.stringID, source.r.x, source.r.y, source.r.width,
+        LayoutImpl<T> layout = (LayoutImpl<T>) surface.getLayout();
+        layout.setRelative(false);
+        layout.put(source.stringID, source.getTarget());
+        layout.addCell(source.stringID, source.r.x, source.r.y, source.r.width,
                 source.r.height, source.getMinWidth(), source.getMaxWidth(), source.getMinHeight(), source.getMaxHeight(),
                 source.getHorizontalWeight(), source.getVerticalWeight());
 
@@ -1408,9 +1414,10 @@ class MosaicEngineImpl<T> implements MosaicEngine<T> {
             source.set(surface, ChangeType.ADD_COMMIT);
             target.set(surface, ChangeType.RESIZE_RELOCATE);
 
-            ((LayoutImpl<T>) surface.getLayout()).setRelative(false);
-            ((LayoutImpl<T>) surface.getLayout()).put(source.stringID, source.getTarget());
-            ((LayoutImpl<T>) surface.getLayout()).addCell(source.stringID, source.r.x, source.r.y, source.r.width,
+            LayoutImpl<T> layout = (LayoutImpl<T>) surface.getLayout();
+            layout.setRelative(false);
+            layout.put(source.stringID, source.getTarget());
+            layout.addCell(source.stringID, source.r.x, source.r.y, source.r.width,
                     source.r.height, source.getMinWidth(), source.getMaxWidth(), source.getMinHeight(), source.getMaxHeight(),
                     source.getHorizontalWeight(), source.getVerticalWeight());
 
@@ -1675,7 +1682,7 @@ class MosaicEngineImpl<T> implements MosaicEngine<T> {
      */
     private ConnectType getHorizontalMergeOptionsLevel2(SurfacePriviledged<T> surface, Node<T> node) {
         ConnectType type = ConnectType.NONE;
-        List<Divider<T>> exclude = new ArrayList<>();
+        List<Divider<T>> exclude = new ArrayList<>(2);
         exclude.add(node.prevVertical);
         exclude.add(node.nextVertical);
 
@@ -1741,7 +1748,7 @@ class MosaicEngineImpl<T> implements MosaicEngine<T> {
 
         final SurfacePriviledged<T> surface;
 
-        List<Node<T>> affectedNodes;
+        //List<Node<T>> affectedNodes;
 
         final List<Element<T>> searchResults = new ArrayList<>();
 
@@ -1764,67 +1771,68 @@ class MosaicEngineImpl<T> implements MosaicEngine<T> {
 
             double cornerClickRadius = surface.getCornerClickRadius();
 
-            Corner retVal = distanceWithin(nx, ny, x, y, cornerClickRadius) ? Corner.NW :
+            return distanceWithin(nx, ny, x, y, cornerClickRadius) ? Corner.NW :
                     distanceWithin(nx, nMaxY, x, y, cornerClickRadius) ? Corner.SW :
                             distanceWithin(nMaxX, ny, x, y, cornerClickRadius) ? Corner.NE :
                                     distanceWithin(nMaxX, nMaxY, x, y, cornerClickRadius) ? Corner.SE : null;
-
-            return retVal;
         }
 
         List<Element<T>> findElements(double x, double y) {
-            Corner corner = null;
-            searchResults.clear();
+            Corner corner;
+
+            final List<Element<T>> res = this.searchResults;
+
+            res.clear();
             List<Node<T>> searchList = surface.getNodeList();
             for (Node<T> n : searchList) {
                 if (n.r.contains(x, y)) {
-                    searchResults.add(n);
+                    res.add(n);
                     break;
                 } else if ((corner = withinCornerRadius(n, x, y)) != null) {
                     switch (corner) {
                         case NW: {
-                            searchResults.add(n.prevVertical);
-                            searchResults.add(n.prevHorizontal);
+                            res.add(n.prevVertical);
+                            res.add(n.prevHorizontal);
                             break;
                         }
                         case SW: {
-                            searchResults.add(n.prevVertical);
-                            searchResults.add(n.nextHorizontal);
+                            res.add(n.prevVertical);
+                            res.add(n.nextHorizontal);
                             break;
                         }
                         case NE: {
-                            searchResults.add(n.nextVertical);
-                            searchResults.add(n.prevHorizontal);
+                            res.add(n.nextVertical);
+                            res.add(n.prevHorizontal);
                             break;
                         }
                         case SE: {
-                            searchResults.add(n.nextVertical);
-                            searchResults.add(n.nextHorizontal);
+                            res.add(n.nextVertical);
+                            res.add(n.nextHorizontal);
                             break;
                         }
                     }
                 }
             }
 
-            if (searchResults.size() == 0) {
+            if (res.size() == 0) {
                 for (Divider<T> d : surface.getVerticalDividers()) {
                     if (d.r.contains(x, y)) {
-                        searchResults.add(d);
+                        res.add(d);
                         break;
                     }
                 }
             }
 
-            if (searchResults.size() == 0) {
+            if (res.size() == 0) {
                 for (Divider<T> d : surface.getHorizontalDividers()) {
                     if (d.r.contains(x, y)) {
-                        searchResults.add(d);
+                        res.add(d);
                         break;
                     }
                 }
             }
 
-            return searchResults;
+            return res;
         }
 
         void selectElement(List<Element<T>> elems, double x, double y) {
@@ -1847,8 +1855,10 @@ class MosaicEngineImpl<T> implements MosaicEngine<T> {
                     System.out.println("\t " + d);
                 }
                 //must use the perpendicular's x/y when alt isn't null and calculating alternate axis
-                dragXOffset = e.type == ElementType.DIVIDER && ((Divider<T>) e).isVertical || alt == null ? x - e.r.x : x - alt.r.x;
-                dragYOffset = e.type == ElementType.DIVIDER && ((Divider<T>) e).isVertical && alt != null ? y - alt.r.y : y - e.r.y;
+                dragXOffset = e.type == ElementType.DIVIDER && ((Divider<T>) e).isVertical ? x - e.r.x : x - alt.r.x;
+                dragYOffset = e.type == ElementType.DIVIDER && ((Divider<T>) e).isVertical ? y - alt.r.y : y - e.r.y;
+//                dragXOffset = e.type == ElementType.DIVIDER && ((Divider<T>) e).isVertical || alt == null ? x - e.r.x : x - alt.r.x;
+//                dragYOffset = e.type == ElementType.DIVIDER && ((Divider<T>) e).isVertical && alt != null ? y - alt.r.y : y - e.r.y;
 
             } else {
                 dragXOffset = x - selectedElement.r.x;
@@ -1878,14 +1888,22 @@ class MosaicEngineImpl<T> implements MosaicEngine<T> {
             return null;
         }
 
+        /** TODO select best node to be dragged over, or multiple if possible */
         Node<T> getDragOverNode(SurfacePriviledged<T> surface, LayoutImpl<T> layout, double x, double y) {
             Node<T> retVal = null;
-            if (retVal == null) {
-                for (Node<T> n : layout.getNodeList()) {
-                    if (n.r.contains(x, y)) {
+            double smallestArea = Double.POSITIVE_INFINITY;
+
+            for (Node<T> n : layout.getNodeList()) {
+                Rectangle2D.Double NR = n.r;
+
+                if (NR.contains(x, y)) {
+                    double a = NR.getWidth() * NR.getHeight();
+                    if (a < smallestArea) {
                         retVal = surface.getNode(n.stringID);
-                        break;
+                        smallestArea = a;
                     }
+
+
                 }
             }
             return retVal;
@@ -1930,7 +1948,7 @@ class MosaicEngineImpl<T> implements MosaicEngine<T> {
                 }
                 case DIVIDER: {
                     Rectangle2D.Double maxMoveBounds = getMaxMoveBounds(surface.getArea(), (Divider<T>) selectedElement);
-                    Rectangle2D.Double altMaxMoveBounds = null;
+                    Rectangle2D.Double altMaxMoveBounds;
                     if (altElement != null) {
                         altMaxMoveBounds = getMaxMoveBounds(surface.getArea(), (Divider<T>) altElement);
                         maxMoveBounds = addPerpendicularBounds(maxMoveBounds, altMaxMoveBounds, !((Divider<T>) selectedElement).isVertical);

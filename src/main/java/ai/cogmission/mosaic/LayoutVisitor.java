@@ -40,8 +40,7 @@ class LayoutVisitor<T> implements PathVisitor<T>, ElementVisitor<T> {
     @Override
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void visit(HorizontalPath hp) {
-    	double totalWidth = surface.getArea().getWidth();
-        netWidth = totalWidth;
+        netWidth = surface.getArea().getWidth();
         lastX = 0;
         for(Object o : hp.getElements()) {
         	Element<T> e = (Element<T>)o;
@@ -53,8 +52,7 @@ class LayoutVisitor<T> implements PathVisitor<T>, ElementVisitor<T> {
     @Override
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void visit(VerticalPath vp) {
-    	double totalHeight = surface.getArea().getHeight();
-        netHeight = totalHeight;
+        netHeight = surface.getArea().getHeight();
         lastY = 0;
         for(Object o : vp.getElements()) {
         	Element<T> e = (Element<T>)o; 
